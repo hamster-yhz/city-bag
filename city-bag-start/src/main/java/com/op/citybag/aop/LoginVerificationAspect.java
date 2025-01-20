@@ -1,8 +1,8 @@
 package com.op.citybag.aop;
 
-import com.op.citybag.demos.model.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.RedisKey;
 import com.op.citybag.demos.model.common.Common;
+import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.utils.TokenUtil;
 import com.op.citybag.demos.web.exception.AppException;
@@ -47,11 +47,12 @@ public class LoginVerificationAspect {
      * 拦截入口
      */
     @Pointcut("@annotation(com.op.citybag.demos.web.constraint.LoginVerification)")
-    public void pointCut(){
+    public void pointCut() {
     }
 
     /**
      * 拦截处理
+     *
      * @param joinPoint joinPoint 信息
      * @return result
      * @throws Throwable if any
@@ -74,7 +75,7 @@ public class LoginVerificationAspect {
         // token校验
         String isDeleted = redissonService.getFromMap(key, Common.TABLE_LOGIC);
 
-        if(accessTokenExpired <= EXPIRED || isDeleted == IS_DELETED){
+        if (accessTokenExpired <= EXPIRED || isDeleted == IS_DELETED) {
             log.info("accessToken已失效,accessToken:{}", token);
             throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getCode()), GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getMessage());
         }
@@ -87,10 +88,9 @@ public class LoginVerificationAspect {
     private Boolean checkAT(String token) {
 
         //用tokenUtil检查token是否合法
-        if(TokenUtil.checkAccessToken(token)){
+        if (TokenUtil.checkAccessToken(token)) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
 
