@@ -22,3 +22,93 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+
+#add
+# 忽略编译生成的文件和目录
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# 忽略 IDE 相关的文件和目录
+.idea/
+.vscode/
+*.iml
+
+# 忽略日志文件
+*.log
+
+# 忽略数据库文件
+*.sqlite
+*.db
+
+# 忽略配置文件
+config.properties
+application.properties
+
+# 忽略临时文件
+*.tmp
+*.bak
+
+# 忽略操作系统生成的文件
+.DS_Store
+Thumbs.db
+
+# 忽略依赖管理工具生成的文件
+node_modules/
+package-lock.json
+yarn.lock
+pom.xml
+target/
+build/
+
+# 忽略测试报告和覆盖率报告
+reports/
+coverage/
+
+# 忽略文档生成的文件
+docs/
+*.pdf
+*.docx
+*.xlsx
+
+# 忽略其他不需要版本控制的文件
+*.swp
+*.swo
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 忽略环境变量文件
+.env
+.env.local
+.env.development
+.env.production
+
+# 忽略编辑器配置文件
+.editorconfig
+
+# 忽略 Docker 相关文件
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# 忽略 Kubernetes 相关文件
+*.yaml
+*.yml
+
+# 忽略 CI/CD 配置文件
+.gitlab-ci.yml
+.travis.yml
+.github/
+circleci/
+
+# 忽略其他特定的文件或目录
+specific_file.txt
+specific_directory/
