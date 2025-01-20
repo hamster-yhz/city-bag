@@ -1,6 +1,6 @@
 package com.op.citybag.demos.web.exception;
 
-import com.op.citybag.demos.model.GlobalServiceStatusCode;
+import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.web.common.OPResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
