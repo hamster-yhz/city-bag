@@ -11,6 +11,8 @@ public class Common {
 
     public static final String OPENID = "openid";
 
+    public static final String PASSWORD = "password";
+
     public static final String TABLE_LOGIC = "is_deleted";
 
     public static final Integer NOT_DELETE = 0;

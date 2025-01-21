@@ -54,6 +54,12 @@ public class User {
     @TableField("openid")
     private String openid;
 
+    @TableField("stu_id")
+    private String stuId;
+
+    @TableField("password")
+    private String password;
+
     @TableField("gender")
     private Integer gender;
 
