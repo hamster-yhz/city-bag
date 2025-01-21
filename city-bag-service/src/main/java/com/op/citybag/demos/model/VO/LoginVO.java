@@ -40,6 +40,11 @@ public class LoginVO {
     private String phone;
 
     /**
+     * 用户学号
+     */
+    private String stuId;
+
+    /**
      * 用户权mi==名
      */
     private String userName;

@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 /**
  * @Author: 原神
@@ -19,7 +18,7 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 @Validated
-public class LoginDTO {
+public class WxLoginDTO {
 
     /**
      * 微信登陆零时码code，通过wx.login() 获取
