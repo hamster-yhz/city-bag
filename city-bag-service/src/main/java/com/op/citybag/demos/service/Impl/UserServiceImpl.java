@@ -1,11 +1,13 @@
 package com.op.citybag.demos.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.op.citybag.demos.exception.AppException;
 import com.op.citybag.demos.mapper.UserMapper;
 import com.op.citybag.demos.model.Entity.User;
 import com.op.citybag.demos.model.RedisKey;
 import com.op.citybag.demos.model.VO.LoginVO;
 import com.op.citybag.demos.model.common.Common;
+import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -52,15 +54,19 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void modifyUserInfo(User user) {
+
         log.info("正在修改用户信息,userId: {}",user.getUserId());
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq(Common.USER_ID, user.getUserId());
-        boolean success = userMapper.update(user, wrapper) > 0;
-        if (success) {
-            log.info("修改成功,userId: {}",user.getUserId());
-        }else{
-            throw new RuntimeException("修改失败");
+
+        int rowsAffected = userMapper.update(user, wrapper);
+        if (rowsAffected > 0) {
+            log.info("用户信息,修改成功,受影响的行数:{},userId: {}",rowsAffected, user.getUserId());
+        } else {
+            log.info("用户信息,修改失败,未找到匹配的用户或更新操作未执行,userId: {}",user.getUserId());
+            throw new AppException(String.valueOf(GlobalServiceStatusCode.USER_UPDATE_ERROR.getCode()), GlobalServiceStatusCode.USER_UPDATE_ERROR.getMessage());
         }
+
 
     }
 
