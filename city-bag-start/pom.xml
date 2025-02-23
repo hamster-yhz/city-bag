@@ -21,14 +21,19 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>aliyun-oss-spring-boot-starter</artifactId>
         </dependency>
+
+        <!-- 引入service模块 -->
         <dependency>
             <groupId>com.op</groupId>
             <artifactId>city-bag-service</artifactId>
         </dependency>
+
+        <!-- 引入web模块 -->
         <dependency>
             <groupId>com.op</groupId>
             <artifactId>city-bag-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
