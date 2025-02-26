@@ -1,9 +1,9 @@
 package com.op.citybag.demos.web.common.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @Author: 原神
@@ -14,9 +14,12 @@ import org.springframework.validation.annotation.Validated;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Validated
-public class AIDto {
+public class AIDTO {
 
+    @NotBlank(message = "输入不能为空")
     String input;
 }
