@@ -53,7 +53,7 @@ public class OssDemoService {
 	/**
 	 * the file in oss remote server.
 	 */
-	@Value("oss://" + OssConfig.BUCKET_NAME + "/config/oss/oss-test.json")
+	@Value("oss://" + OssConfigProperties.BUCKET_NAME + "/config/oss/oss-test.json")
 	private Resource remoteFile;
 
 	public String readRemoteFileViaResource() throws IOException {
@@ -62,13 +62,13 @@ public class OssDemoService {
 	}
 
 	public String readRemoteFileViaClient() throws IOException {
-		OSSObject ossObject = ossClient.getObject(OssConfig.BUCKET_NAME, "config/oss/oss-test.json");
+		OSSObject ossObject = ossClient.getObject(OssConfigProperties.BUCKET_NAME, "config/oss/oss-test.json");
 		return IOUtils.readStreamAsString(ossObject.getObjectContent(),
 				CharEncoding.UTF_8);
 	}
 
 	public void uploadWithClient() {
-		ossClient.putObject(OssConfig.BUCKET_NAME, "config/oss/oss-test.json",
+		ossClient.putObject(OssConfigProperties.BUCKET_NAME, "config/oss/oss-test.json",
 				this.getClass().getClassLoader().getResourceAsStream("config/oss/oss-test.json"));
 	}
 
@@ -87,7 +87,7 @@ public class OssDemoService {
 		}
 
 		try (InputStream inputStream = new FileInputStream(imageFile)) {
-			PutObjectRequest putObjectRequest = new PutObjectRequest(OssConfig.BUCKET_NAME, key, inputStream);
+			PutObjectRequest putObjectRequest = new PutObjectRequest(OssConfigProperties.BUCKET_NAME, key, inputStream);
 			ossClient.putObject(putObjectRequest);
 		} catch (OSSException oe) {
 			System.out.println("Caught an OSSException, which means your request made it to OSS, "
@@ -105,7 +105,7 @@ public class OssDemoService {
 
 	// 下载图片从OSS
 	public byte[] downloadImage(String key) throws IOException {
-		try (InputStream inputStream = ossClient.getObject(OssConfig.BUCKET_NAME, key).getObjectContent()) {
+		try (InputStream inputStream = ossClient.getObject(OssConfigProperties.BUCKET_NAME, key).getObjectContent()) {
 			return IOUtils.readStreamAsByteArray(inputStream);
 		} catch (OSSException oe) {
 			System.out.println("Caught an OSSException, which means your request made it to OSS, "
