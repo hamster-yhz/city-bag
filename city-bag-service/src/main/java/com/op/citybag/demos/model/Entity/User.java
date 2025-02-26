@@ -28,7 +28,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
+ * @Author: 原神
+ * @Description: 用户实体类
+ * @Date: 2025/2/26 19:42
+ * @Version: 1.0
  */
 
 @Setter
@@ -84,14 +87,14 @@ public class User {
     @TableField("like_count")
     private Integer likeCount;
 
-    @TableField("create_time")
-    private LocalDate createTime;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
 
-    @TableField("update_time")
-    private LocalDate updateTime;
+    @TableField(fill = FieldFill.UPDATE)
+    private LocalDateTime updateTime;
 
     @TableField("is_deleted")
     @TableLogic
-    private Integer isDeleted;
+    private Boolean deleted;
 
 }
