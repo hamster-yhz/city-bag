@@ -12,13 +12,13 @@ import com.op.citybag.demos.service.ILoginService;
 import com.op.citybag.demos.web.common.dto.UserDTO;
 import com.op.citybag.demos.web.constraint.LoginVerification;
 import com.op.citybag.demos.web.constraint.SelfPermissionVerification;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Author: 原神
