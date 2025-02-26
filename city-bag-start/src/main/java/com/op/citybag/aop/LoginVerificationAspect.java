@@ -6,6 +6,7 @@ import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.utils.TokenUtil;
 import com.op.citybag.demos.web.exception.AppException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -17,10 +18,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * @Author: 严豪哲
