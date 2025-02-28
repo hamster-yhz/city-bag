@@ -33,6 +33,9 @@ public class Food {
     @TableField("like_count")
     private Integer likeCount;
 
+    @TableField("city_id")
+    private String cityId;
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 

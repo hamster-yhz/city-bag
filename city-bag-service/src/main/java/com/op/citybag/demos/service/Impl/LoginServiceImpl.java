@@ -16,18 +16,20 @@ import com.op.citybag.demos.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: 原神
- * @Description:
+ * @Description: 登陆服务实现类
  * @Date: 2025/1/18 20:00
  * @Version: 1.0
  */
 
 @Service
 @Slf4j
+@Transactional
 public class LoginServiceImpl implements ILoginService {
 
     @Autowired
@@ -104,24 +106,6 @@ public class LoginServiceImpl implements ILoginService {
         log.info("退出登录成功,userId:{}", userId);
     }
 
-
-    private void updatePassword(String userId, String newPassword) {
-        // 创建 UpdateWrapper 对象
-        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-        // 设置更新条件
-        updateWrapper.eq(Common.USER_ID, userId);
-        // 设置要更新的字段和值
-        updateWrapper.set(Common.PASSWORD, newPassword);
-        // 执行更新操作
-        int rowsAffected = userMapper.update(null, updateWrapper);
-
-        if (rowsAffected > 0) {
-            log.info("密码更新成功，受影响的行数: {}", rowsAffected);
-        } else {
-            log.info("密码更新失败，未找到匹配的用户或更新操作未执行");
-        }
-    }
-
     /**
      * 创建新用户
      *
@@ -158,6 +142,23 @@ public class LoginServiceImpl implements ILoginService {
             log.info("用户已存在,openid:{},phoneNumber:{}", openid, phoneNumber);
         }
         return user;
+    }
+
+    private void updatePassword(String userId, String newPassword) {
+        // 创建 UpdateWrapper 对象
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        // 设置更新条件
+        updateWrapper.eq(Common.USER_ID, userId);
+        // 设置要更新的字段和值
+        updateWrapper.set(Common.PASSWORD, newPassword);
+        // 执行更新操作
+        int rowsAffected = userMapper.update(null, updateWrapper);
+
+        if (rowsAffected > 0) {
+            log.info("密码更新成功，受影响的行数: {}", rowsAffected);
+        } else {
+            log.info("密码更新失败，未找到匹配的用户或更新操作未执行");
+        }
     }
 
     /**
