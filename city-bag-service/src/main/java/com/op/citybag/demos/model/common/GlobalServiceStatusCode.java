@@ -48,14 +48,9 @@ public enum GlobalServiceStatusCode {
     USER_NO_PERMISSION(2403, "用户无权限"),
     USER_CAPTCHA_CODE_ERROR(2500, "验证码错误,请重试"),
 
-    /* 团队异常 3001-4000 */
-    TEAM_NOT_EXIST(3001, "团队不存在"),
-    TEAM_NOT_JOIN(3002, "团队未加入"),
-    TEAM_NOT_NUMBER(3003, "团队成员不存在"),
-    TEAM_INVALID_OPERATION(3004, "无效的团队操作"),
-
-    TEAM_STRUCTURE_ADD_INVALID(3101, "无效的职位/分组添加"),
-    TEAM_STRUCTURE_DELETE_INVALID(3102, "无效的职位/分组删除"),
+    /* 主页异常 3001-4000 */
+    CITY_NOT_EXIST(3001, "城市不存在"),
+    OSS_ERROR(3002, "OSS异常"),
 
     /* 登录模块错误 6001-7000*/
     LOGIN_CODE_EXIT(6001, "需要等待一段时间后才能再次尝试"),
