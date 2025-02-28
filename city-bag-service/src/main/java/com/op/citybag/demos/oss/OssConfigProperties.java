@@ -18,8 +18,12 @@ package com.op.citybag.demos.oss;
 
 import com.aliyun.oss.OSS;
 
+import com.aliyun.oss.OSSClientBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,27 +33,23 @@ import org.springframework.context.annotation.Configuration;
  * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
  */
 
+// ... 保留原有版权声明 ...
+
 @Configuration
+@ConfigurationProperties(prefix = "oss")
+@Getter
+@Setter
 public class OssConfigProperties {
 
-	/**
-	 * Bucket Name of OSS Example.
-	 */
-	public static final String BUCKET_NAME = "city-bag";
+	// 从配置文件读取配置
+	private String endpoint;
+	private String accessKeyId;
+	private String accessKeySecret;
+	private String bucketName;
 
-	@Autowired
-	private OSS ossClient;
-
-	/**
-	 * You can use these code to check or create oss bucket. Or manage buckets in
-	 * <a href="https://oss.console.aliyun.com/bucket">oss console</a>.
-	 */
+	// 创建OSS客户端Bean
 	@Bean
-	public ApplicationRunner ossBucketInitRunner() {
-		return args -> {
-			if (!ossClient.doesBucketExist(BUCKET_NAME)) {
-				ossClient.createBucket(BUCKET_NAME);
-			}
-		};
+	public OSS ossClient() {
+		return new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
 	}
 }
