@@ -13,16 +13,18 @@ import com.op.citybag.demos.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author: 原神
- * @Description:
+ * @Description: 用户服务实现类
  * @Date: 2025/1/20 14:56
  * @Version: 1.0
  */
 
 @Service
 @Slf4j
+@Transactional
 public class UserServiceImpl implements IUserService {
 
     @Autowired
@@ -53,6 +55,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifyUserInfo(User user) {
 
         log.info("正在修改用户信息,userId: {}",user.getUserId());
