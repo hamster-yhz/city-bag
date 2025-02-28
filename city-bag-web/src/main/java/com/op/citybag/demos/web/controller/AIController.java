@@ -1,7 +1,7 @@
 package com.op.citybag.demos.web.controller;
 
 import com.op.citybag.demos.web.common.OPResult;
-import com.op.citybag.demos.web.common.dto.AIDTO;
+import com.op.citybag.demos.web.common.dto.AI.AIDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.*;
  * @Version: 1.0
  */
 
+//${app.config.api-version}
 @Slf4j
 @Validated
 @RestController()
 @CrossOrigin("${app.config.cross-origin}")
-@RequestMapping("/api/${app.config.api-version}/ai/")
+@RequestMapping("/api/v1/ai/")//测试
 @RequiredArgsConstructor
 public class AIController {
 
@@ -32,11 +33,16 @@ public class AIController {
         this.chatClient = chatClientBuilder.build();
     }
 
+    /**
+     * AI聊天(非流式)
+     * @param AIDTO
+     * @return
+     */
     @PostMapping("chat")
-    public OPResult chat(@RequestBody AIDTO aiDto) {
+    public OPResult chat(@RequestBody AIDTO AIDTO) {
         try {
             String answer = chatClient.prompt()
-                    .user(aiDto.getInput())
+                    .user(AIDTO.getInput())
                     .call()
                     .content();
             return OPResult.SUCCESS(answer);

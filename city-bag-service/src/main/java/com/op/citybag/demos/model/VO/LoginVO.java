@@ -84,7 +84,7 @@ public class LoginVO {
     /**
      * 最近登陆时间
      */
-    private LocalDate updateTime;
+    private LocalDateTime updateTime;
 
 }
 
