@@ -1,4 +1,4 @@
-package com.op.citybag.demos.model.VO;
+package com.op.citybag.demos.model.VO.login;
 
 import lombok.*;
 

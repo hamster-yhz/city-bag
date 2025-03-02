@@ -10,10 +10,10 @@ import com.op.citybag.demos.model.Entity.City;
 import com.op.citybag.demos.model.Entity.Dormitory;
 import com.op.citybag.demos.model.Entity.Food;
 import com.op.citybag.demos.model.Entity.ScenicSpot;
-import com.op.citybag.demos.model.VO.DormitoryListVO;
-import com.op.citybag.demos.model.VO.FoodListVO;
-import com.op.citybag.demos.model.VO.ScenicSpotListVO;
-import com.op.citybag.demos.model.VO.SingleCityVO;
+import com.op.citybag.demos.model.VO.page.DormitoryListVO;
+import com.op.citybag.demos.model.VO.page.FoodListVO;
+import com.op.citybag.demos.model.VO.page.ScenicSpotListVO;
+import com.op.citybag.demos.model.VO.page.SingleCityVO;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.oss.OSSServiceImpl;
 import com.op.citybag.demos.service.ICityService;
@@ -66,10 +66,9 @@ public class CityServiceImpl implements ICityService {
         // 转换为VO
         SingleCityVO singleCityVO = City2SingleCityVO(city);
 
-        //city.getUrl()
         // 查询城市图片
         String cityImg = ossDemoService.generatePresignedUrl
-                ("d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0.png", 1000000000);
+                (city.getImage_url(), 1000000000);
         singleCityVO.setCityImg(cityImg);
 
         return singleCityVO;

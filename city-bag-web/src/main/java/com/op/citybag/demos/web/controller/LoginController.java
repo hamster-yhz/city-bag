@@ -1,9 +1,8 @@
 package com.op.citybag.demos.web.controller;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
-import com.op.citybag.demos.model.VO.LoginVO;
+import com.op.citybag.demos.model.VO.login.LoginVO;
 import com.op.citybag.demos.service.ILoginService;
-import com.op.citybag.demos.service.IUserService;
 import com.op.citybag.demos.web.common.OPResult;
 import com.op.citybag.demos.web.common.dto.login.ChangePasswordDTO;
 import com.op.citybag.demos.web.common.dto.login.StuLoginDTO;
@@ -95,8 +94,8 @@ public class LoginController {
      * 退出登陆
      */
     @PostMapping("logout")
-    @LoginVerification
-    @SelfPermissionVerification
+//    @LoginVerification
+//    @SelfPermissionVerification
     public OPResult logout(@RequestBody UserDTO userDTO){
         try{
             log.info("退出登陆开始,userId:{}",userDTO.getUserId());
@@ -114,8 +113,8 @@ public class LoginController {
      * @param changePasswordDTO
      * @return
      */
-    @LoginVerification
-    @SelfPermissionVerification
+//    @LoginVerification
+//    @SelfPermissionVerification
     @PostMapping("changePassword")
     public OPResult changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
         try {

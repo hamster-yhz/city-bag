@@ -1,8 +1,9 @@
 package com.op.citybag.aop;
 
-import com.op.citybag.demos.model.RedisKey;
+
 import com.op.citybag.demos.model.common.Common;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
+import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.utils.TokenUtil;
 import com.op.citybag.demos.web.exception.AppException;
@@ -73,7 +74,7 @@ public class SelfPermissionVerificationAspect {
 
         // 获取用户ID
         Object arg = joinPoint.getArgs()[0];
-        if(arg == null){
+        if (arg == null) {
             throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_UNKNOWN_ERROR.getCode()), GlobalServiceStatusCode.LOGIN_UNKNOWN_ERROR.getMessage());
         }
         String targetUserId = (String) arg.getClass().getMethod("getUserId").invoke(arg);

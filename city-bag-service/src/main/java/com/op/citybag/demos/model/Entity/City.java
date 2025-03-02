@@ -36,6 +36,9 @@ public class City {
     @TableField("scenic_spot_introduce")
     private String scenicSpotIntroduce;
 
+    @TableField("image_url")
+    private String image_url;
+
     @TableField("like_count")
     private Integer likeCount;
 

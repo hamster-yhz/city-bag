@@ -1,6 +1,6 @@
 package com.op.citybag.demos.service;
 
-import com.op.citybag.demos.model.VO.LoginVO;
+import com.op.citybag.demos.model.VO.login.LoginVO;
 
 public interface ILoginService {
 

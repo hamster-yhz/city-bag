@@ -1,8 +1,9 @@
 package com.op.citybag.aop;
 
-import com.op.citybag.demos.model.RedisKey;
+
 import com.op.citybag.demos.model.common.Common;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
+import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.utils.TokenUtil;
 import com.op.citybag.demos.web.exception.AppException;

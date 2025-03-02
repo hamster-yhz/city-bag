@@ -21,6 +21,7 @@ public class Common {
 
     public static final long TRY_LOCK_TIME = 5;
 
+    public static final long REDIS_EXPIRE_TIME_10_MINUTES = 10 * 60 * 1000;
 
     /**
      * 过期时间 秒

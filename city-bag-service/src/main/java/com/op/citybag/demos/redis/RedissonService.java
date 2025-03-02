@@ -22,7 +22,7 @@ public class RedissonService implements IRedisService {
         redissonClient.<T>getBucket(key).set(value);
     }
 
-    public void setValueExpired(String key, long expired){
+    public void setValueExpired(String key, long expired) {
         redissonClient.getBucket(key).expire(expired, TimeUnit.MILLISECONDS);
     }
 
@@ -152,7 +152,7 @@ public class RedissonService implements IRedisService {
         return map.remainTimeToLive();
     }
 
-    public Map<String,String> getMapToJavaMap(String key) {
+    public Map<String, String> getMapToJavaMap(String key) {
         RMap<String, String> map = redissonClient.getMap(key);
         return map.readAllMap();
     }

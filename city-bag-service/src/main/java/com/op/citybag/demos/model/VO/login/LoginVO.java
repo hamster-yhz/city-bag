@@ -1,4 +1,4 @@
-package com.op.citybag.demos.model.VO;
+package com.op.citybag.demos.model.VO.login;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

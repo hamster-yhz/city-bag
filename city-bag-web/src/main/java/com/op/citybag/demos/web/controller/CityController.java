@@ -1,9 +1,9 @@
 package com.op.citybag.demos.web.controller;
 
-import com.op.citybag.demos.model.VO.DormitoryListVO;
-import com.op.citybag.demos.model.VO.FoodListVO;
-import com.op.citybag.demos.model.VO.ScenicSpotListVO;
-import com.op.citybag.demos.model.VO.SingleCityVO;
+import com.op.citybag.demos.model.VO.page.DormitoryListVO;
+import com.op.citybag.demos.model.VO.page.FoodListVO;
+import com.op.citybag.demos.model.VO.page.ScenicSpotListVO;
+import com.op.citybag.demos.model.VO.page.SingleCityVO;
 import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.web.common.OPResult;
 import com.op.citybag.demos.web.common.dto.city.QueryCityContentDTO;
