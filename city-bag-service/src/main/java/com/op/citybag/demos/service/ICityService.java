@@ -4,6 +4,9 @@ import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
 import com.op.citybag.demos.model.VO.page.list.FoodListVO;
 import com.op.citybag.demos.model.VO.page.list.ScenicSpotListVO;
 import com.op.citybag.demos.model.VO.page.object.CityVO;
+import com.op.citybag.demos.model.VO.page.object.DormitoryVO;
+import com.op.citybag.demos.model.VO.page.object.FoodVO;
+import com.op.citybag.demos.model.VO.page.object.ScenicSpotVO;
 
 public interface ICityService {
 
@@ -34,5 +37,26 @@ public interface ICityService {
      * @return 城市对应的住宿
      */
     DormitoryListVO queryCityDormitory(String cityId);
+
+    /**
+     * 查询单个景点信息
+     * @param scenicSpotId
+     * @return 景点信息
+     */
+    ScenicSpotVO querySingleScenicSpot(String scenicSpotId);
+
+    /**
+     * 查询单个美食信息
+     * @param foodId
+     * @return 美食信息
+     */
+    FoodVO querySingleFood(String foodId);
+
+    /**
+     * 查询单个住宿信息
+     * @param dormitoryId
+     * @return 住宿信息
+     */
+    DormitoryVO querySingleDormitory(String dormitoryId);
 
 }

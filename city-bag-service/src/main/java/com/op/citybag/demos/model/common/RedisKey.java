@@ -17,4 +17,10 @@ public class RedisKey {
 
     public final static String USER_TO_TOKEN = "op:city_bag:user_to_token";
 
+    public static final String DORMITORY_INFO = "citybag:dormitory:info:";
+
+    public static final String SCENIC_SPOT_INFO = "citybag:scenic:info:";
+
+    public static final String FOOD_INFO = "citybag:food:info:";
+
 }

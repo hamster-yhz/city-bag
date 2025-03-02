@@ -18,8 +18,14 @@ import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
 import com.op.citybag.demos.model.VO.page.list.FoodListVO;
 import com.op.citybag.demos.model.VO.page.list.ScenicSpotListVO;
 import com.op.citybag.demos.model.VO.page.object.CityVO;
+import com.op.citybag.demos.model.VO.page.object.DormitoryVO;
+import com.op.citybag.demos.model.VO.page.object.FoodVO;
+import com.op.citybag.demos.model.VO.page.object.ScenicSpotVO;
+import com.op.citybag.demos.model.common.Common;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
+import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.oss.OSSServiceImpl;
+import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.utils.Entity2VO;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +59,9 @@ public class CityServiceImpl implements ICityService {
 
     @Autowired
     private OSSServiceImpl ossDemoService;
+
+    @Autowired
+    private RedissonService redissonService;
 
     @Override
     public CityVO querySingleCity(String cityName) {
@@ -150,5 +159,76 @@ public class CityServiceImpl implements ICityService {
                 .build();
     }
 
+    @Override
+    public DormitoryVO querySingleDormitory(String dormitoryId) {
+        String cacheKey = RedisKey.DORMITORY_INFO + dormitoryId;
 
+        // 尝试从缓存获取
+        DormitoryVO dormitoryVO = redissonService.getValue(cacheKey);
+        if (dormitoryVO != null) {
+            log.info("从缓存获取住宿信息: {}", dormitoryId);
+            return dormitoryVO;
+        }
+
+        // 查询数据库
+        Dormitory dormitory = dormitoryMapper.selectById(dormitoryId);
+        if (dormitory == null) {
+            log.info("未找到住宿信息: {}", dormitoryId);
+            throw new AppException(String.valueOf(GlobalServiceStatusCode.DORMITORY_NOT_EXIST.getCode()), GlobalServiceStatusCode.DORMITORY_NOT_EXIST.getMessage());
+        }
+
+        // 转换VO
+        dormitoryVO = Entity2VO.Dormitory2DormitoryVO(dormitory);
+        dormitoryVO.setDormitoryImg(ossDemoService.generatePresignedUrl(dormitory.getImageUrl(), 1000000000));
+
+        // 写入缓存
+        redissonService.setValue(cacheKey, dormitoryVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
+        return dormitoryVO;
+    }
+
+    @Override
+    public ScenicSpotVO querySingleScenicSpot(String scenicSpotId) {
+        String cacheKey = RedisKey.SCENIC_SPOT_INFO + scenicSpotId;
+
+        ScenicSpotVO scenicSpotVO = redissonService.getValue(cacheKey);
+        if (scenicSpotVO != null) {
+            log.info("从缓存获取景点信息: {}", scenicSpotId);
+            return scenicSpotVO;
+        }
+
+        ScenicSpot spot = scenicSpotMapper.selectById(scenicSpotId);
+        if (spot == null) {
+            log.info("未找到景点信息: {}", scenicSpotId);
+            throw new AppException(String.valueOf(GlobalServiceStatusCode.SCENIC_SPOT_NOT_EXIST.getCode()), GlobalServiceStatusCode.SCENIC_SPOT_NOT_EXIST.getMessage());
+        }
+
+        scenicSpotVO = Entity2VO.ScenicSpot2ScenicSpotVO(spot);
+        scenicSpotVO.setScenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(), 1000000000));
+
+        redissonService.setValue(cacheKey, scenicSpotVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
+        return scenicSpotVO;
+    }
+
+    @Override
+    public FoodVO querySingleFood(String foodId) {
+        String cacheKey = RedisKey.FOOD_INFO + foodId;
+
+        FoodVO foodVO = redissonService.getValue(cacheKey);
+        if (foodVO != null) {
+            log.info("从缓存获取美食信息: {}", foodId);
+            return foodVO;
+        }
+
+        Food food = foodMapper.selectById(foodId);
+        if (food == null) {
+            log.info("未找到美食信息: {}", foodId);
+            throw new AppException(String.valueOf(GlobalServiceStatusCode.FOOD_NOT_EXIST.getCode()), GlobalServiceStatusCode.FOOD_NOT_EXIST.getMessage());
+        }
+
+        foodVO = Entity2VO.Food2FoodVO(food);
+        foodVO.setFoodImg(ossDemoService.generatePresignedUrl(food.getImageUrl(), 1000000000));
+
+        redissonService.setValue(cacheKey, foodVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
+        return foodVO;
+    }
 }

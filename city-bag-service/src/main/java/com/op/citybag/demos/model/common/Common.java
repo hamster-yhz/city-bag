@@ -21,11 +21,14 @@ public class Common {
 
     public static final long TRY_LOCK_TIME = 5;
 
-    public static final long REDIS_EXPIRE_TIME_10_MINUTES = 10 * 60 * 1000;
-
     /**
      * 过期时间 秒
      */
-    public static final Long MONTH = 30L * 24 * 60 * 60 * 1000; // 一个月的豪秒数
+    public static final Long MONTH = 30L * 24 * 60 * 60 * 1000L; // 一个月的豪秒数
+
+    public static final long REDIS_EXPIRE_TIME_10_MINUTES = 10 * 60 * 1000L;
+
+    public static final Long REDIS_EXPIRE_TIME_30_MINUTES = 30 * 60 * 1000L;
+
 
 }

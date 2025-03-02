@@ -115,4 +115,10 @@ public class CityController {
         }
     }
 
+    /**
+     * 查询单个景点信息
+     * @param scenicSpotId
+     * @return
+     **/
+
 }
