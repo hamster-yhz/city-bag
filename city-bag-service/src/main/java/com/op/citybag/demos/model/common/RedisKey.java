@@ -1,4 +1,4 @@
-package com.op.citybag.demos.model;
+package com.op.citybag.demos.model.common;
 
 /**
  * @Author: 严豪哲

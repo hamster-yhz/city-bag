@@ -1,14 +1,10 @@
 package com.op.citybag.demos.web.controller;
 
-import cn.binarywang.wx.miniapp.api.WxMaService;
 import com.op.citybag.demos.model.Entity.User;
+import com.op.citybag.demos.model.VO.user.UserVO;
 import com.op.citybag.demos.service.IUserService;
 import com.op.citybag.demos.web.common.OPResult;
-import com.op.citybag.demos.web.common.dto.login.ChangePasswordDTO;
-import com.op.citybag.demos.web.common.dto.login.StuLoginDTO;
-import com.op.citybag.demos.web.common.dto.login.WxLoginDTO;
-import com.op.citybag.demos.model.VO.LoginVO;
-import com.op.citybag.demos.service.ILoginService;
+import com.op.citybag.demos.model.VO.login.LoginVO;
 import com.op.citybag.demos.web.common.dto.user.UserDTO;
 import com.op.citybag.demos.web.constraint.LoginVerification;
 import com.op.citybag.demos.web.constraint.SelfPermissionVerification;
@@ -42,8 +38,8 @@ public class UserController {
     /**
      * 修改个人信息
      */
-    @LoginVerification
-    @SelfPermissionVerification
+//    @LoginVerification
+//    @SelfPermissionVerification
     @PostMapping("modifyUserInfo")
     public OPResult modifyUserInfo(@RequestBody UserDTO userDTO){
         try{
@@ -67,14 +63,14 @@ public class UserController {
     /**
      * 查询个人信息
      */
-    @LoginVerification
-    @SelfPermissionVerification
+//    @LoginVerification
+//    @SelfPermissionVerification
     @PostMapping("queryUserInfo")
     public OPResult queryUserInfo(@RequestBody UserDTO userDTO, HttpServletRequest request){
         try{
-            LoginVO loginVO = userService.queryUserInfo(userDTO.getUserId());
-            log.info("查询个人信息成功,userId:{}",loginVO.getUserId());
-            return OPResult.SUCCESS(loginVO);
+            UserVO userInfo = userService.queryUserInfo(userDTO.getUserId());
+            log.info("查询个人信息成功,userId:{}",userInfo.getUserId());
+            return OPResult.SUCCESS(userInfo);
         }catch (Exception e){
             log.error("查询个人信息失败,userId:{},cuz:{}",userDTO.getUserId(),e.getMessage());
             return OPResult.FAIL(e);
