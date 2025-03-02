@@ -1,9 +1,9 @@
 package com.op.citybag.demos.web.controller;
 
-import com.op.citybag.demos.model.VO.page.DormitoryListVO;
-import com.op.citybag.demos.model.VO.page.FoodListVO;
-import com.op.citybag.demos.model.VO.page.ScenicSpotListVO;
-import com.op.citybag.demos.model.VO.page.SingleCityVO;
+import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
+import com.op.citybag.demos.model.VO.page.list.FoodListVO;
+import com.op.citybag.demos.model.VO.page.list.ScenicSpotListVO;
+import com.op.citybag.demos.model.VO.page.object.CityVO;
 import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.web.common.OPResult;
 import com.op.citybag.demos.web.common.dto.city.QueryCityContentDTO;
@@ -43,10 +43,10 @@ public class CityController {
         try {
             log.info("查询单个城市信息开始");
 
-            SingleCityVO singleCityVO = cityService.querySingleCity(querySingleCityDTO.getCityName());
+            CityVO cityVO = cityService.querySingleCity(querySingleCityDTO.getCityName());
 
             log.info("查询单个城市信息成功");
-            return OPResult.SUCCESS(singleCityVO);
+            return OPResult.SUCCESS(cityVO);
         } catch (Exception e) {
             log.error("查询单个城市信息失败,{}", e.getMessage());
             return OPResult.FAIL(e);

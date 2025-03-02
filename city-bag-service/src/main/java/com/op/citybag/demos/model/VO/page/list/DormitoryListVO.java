@@ -1,6 +1,7 @@
-package com.op.citybag.demos.model.VO.page;
+package com.op.citybag.demos.model.VO.page.list;
 
 import com.op.citybag.demos.model.Entity.Dormitory;
+import com.op.citybag.demos.model.VO.page.cover.DormitoryCoverVO;
 import lombok.*;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class DormitoryListVO {
     private String cityName;
 
     // 景点列表
-    private List<Dormitory> dormitoryList;
+    private List<DormitoryCoverVO> dormitoryList;
 
     // 分页信息
     private Integer pageNum;

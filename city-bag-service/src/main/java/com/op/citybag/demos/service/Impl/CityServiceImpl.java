@@ -10,10 +10,10 @@ import com.op.citybag.demos.model.Entity.City;
 import com.op.citybag.demos.model.Entity.Dormitory;
 import com.op.citybag.demos.model.Entity.Food;
 import com.op.citybag.demos.model.Entity.ScenicSpot;
-import com.op.citybag.demos.model.VO.page.DormitoryListVO;
-import com.op.citybag.demos.model.VO.page.FoodListVO;
-import com.op.citybag.demos.model.VO.page.ScenicSpotListVO;
-import com.op.citybag.demos.model.VO.page.SingleCityVO;
+import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
+import com.op.citybag.demos.model.VO.page.list.FoodListVO;
+import com.op.citybag.demos.model.VO.page.list.ScenicSpotListVO;
+import com.op.citybag.demos.model.VO.page.object.CityVO;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.oss.OSSServiceImpl;
 import com.op.citybag.demos.service.ICityService;
@@ -50,7 +50,7 @@ public class CityServiceImpl implements ICityService {
     private OSSServiceImpl ossDemoService;
 
     @Override
-    public SingleCityVO querySingleCity(String cityName) {
+    public CityVO querySingleCity(String cityName) {
 
         // 构建查询条件
         QueryWrapper<City> wrapper = new QueryWrapper<>();
@@ -64,14 +64,14 @@ public class CityServiceImpl implements ICityService {
         }
 
         // 转换为VO
-        SingleCityVO singleCityVO = City2SingleCityVO(city);
+        CityVO cityVO = City2SingleCityVO(city);
 
         // 查询城市图片
         String cityImg = ossDemoService.generatePresignedUrl
                 (city.getImage_url(), 1000000000);
-        singleCityVO.setCityImg(cityImg);
+        cityVO.setCityImg(cityImg);
 
-        return singleCityVO;
+        return cityVO;
     }
 
     @Override
@@ -113,8 +113,8 @@ public class CityServiceImpl implements ICityService {
     /**
      * City转CityVO
      */
-    private SingleCityVO City2SingleCityVO(City city) {
-        return SingleCityVO.builder()
+    private CityVO City2SingleCityVO(City city) {
+        return CityVO.builder()
                 .cityId(city.getCityId())
                 .cityName(city.getCityName())
                 .cityIntroduce(city.getCityIntroduce())

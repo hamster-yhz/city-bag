@@ -30,6 +30,9 @@ public class ScenicSpot {
     @TableField("introduce")
     private String introduce;
 
+    @TableField("image_url")
+    private String image_url;
+
     @TableField("type")
     private Integer type;
 

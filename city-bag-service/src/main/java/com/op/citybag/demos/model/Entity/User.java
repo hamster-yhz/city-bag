@@ -75,6 +75,9 @@ public class User {
     @TableField("personalized_signature")
     private String personalizedSignature;
 
+    @TableField("image_url")
+    private String image_url;
+
     /**
      * 0: 普通用户
      * 1-vip用户

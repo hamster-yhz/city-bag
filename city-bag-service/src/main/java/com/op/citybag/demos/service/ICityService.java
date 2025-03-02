@@ -1,9 +1,9 @@
 package com.op.citybag.demos.service;
 
-import com.op.citybag.demos.model.VO.page.DormitoryListVO;
-import com.op.citybag.demos.model.VO.page.FoodListVO;
-import com.op.citybag.demos.model.VO.page.ScenicSpotListVO;
-import com.op.citybag.demos.model.VO.page.SingleCityVO;
+import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
+import com.op.citybag.demos.model.VO.page.list.FoodListVO;
+import com.op.citybag.demos.model.VO.page.list.ScenicSpotListVO;
+import com.op.citybag.demos.model.VO.page.object.CityVO;
 
 public interface ICityService {
 
@@ -12,7 +12,7 @@ public interface ICityService {
      * @param cityName
      * @return 城市信息
      **/
-    SingleCityVO querySingleCity(String cityName);
+    CityVO querySingleCity(String cityName);
 
     /**
      * 查询城市对应的景点
