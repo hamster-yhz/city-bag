@@ -1,4 +1,4 @@
-package com.op.citybag.demos.web.common.dto.user;
+package com.op.citybag.demos.web.common.DTO.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * @Author: 原神

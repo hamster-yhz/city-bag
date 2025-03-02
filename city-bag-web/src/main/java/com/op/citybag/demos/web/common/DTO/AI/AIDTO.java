@@ -1,4 +1,4 @@
-package com.op.citybag.demos.web.common.dto.city;
+package com.op.citybag.demos.web.common.DTO.AI;
 
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 /**
  * @Author: 原神
  * @Description:
- * @Date: 2025/2/26 20:53
+ * @Date: 2025/1/19 17:42
  * @Version: 1.0
  */
 
@@ -18,12 +18,8 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @Builder
 @Validated
-public class QuerySingleCityDTO {
+public class AIDTO {
 
-    /**
-     * 城市名称(精确查询)
-     */
-    @NotBlank(message = "城市名称不能为空")
-    private String cityName;
-
+    @NotBlank(message = "输入不能为空")
+    String input;
 }

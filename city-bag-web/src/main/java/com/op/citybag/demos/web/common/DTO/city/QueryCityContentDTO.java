@@ -1,4 +1,4 @@
-package com.op.citybag.demos.web.common.dto.city;
+package com.op.citybag.demos.web.common.DTO.city;
 
 import lombok.*;
 import org.springframework.validation.annotation.Validated;

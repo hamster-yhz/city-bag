@@ -4,10 +4,13 @@ import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
 import com.op.citybag.demos.model.VO.page.list.FoodListVO;
 import com.op.citybag.demos.model.VO.page.list.ScenicSpotListVO;
 import com.op.citybag.demos.model.VO.page.object.CityVO;
+import com.op.citybag.demos.model.VO.page.object.DormitoryVO;
+import com.op.citybag.demos.model.VO.page.object.FoodVO;
+import com.op.citybag.demos.model.VO.page.object.ScenicSpotVO;
 import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.web.common.OPResult;
-import com.op.citybag.demos.web.common.dto.city.QueryCityContentDTO;
-import com.op.citybag.demos.web.common.dto.city.QuerySingleCityDTO;
+import com.op.citybag.demos.web.common.DTO.city.QueryCityContentDTO;
+import com.op.citybag.demos.web.common.DTO.city.QuerySingleCityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,5 +123,55 @@ public class CityController {
      * @param scenicSpotId
      * @return
      **/
+    @PostMapping("/querysinglescenicspot")
+    public OPResult querySingleScenicSpot(@RequestBody String scenicSpotId){
+        try {
+            log.info("查询单个景点信息开始");
+            ScenicSpotVO scenicSpotVO = cityService.querySingleScenicSpot(scenicSpotId);
+            log.info("查询单个景点信息成功");
+            return OPResult.SUCCESS(scenicSpotVO);
+        }
+        catch (Exception e){
+            log.error("查询单个景点信息失败,{}", e.getMessage());
+            return OPResult.FAIL(e);
+        }
+    }
 
+    /**
+     * 查询单个美食信息
+     * @param foodId
+     * @return
+     **/
+    @PostMapping("/querysinglefood")
+    public OPResult querySingleFood(@RequestBody String foodId){
+        try {
+            log.info("查询单个美食信息开始");
+            FoodVO foodVO = cityService.querySingleFood(foodId);
+            log.info("查询单个美食信息成功");
+            return OPResult.SUCCESS(foodVO);
+        }
+        catch (Exception e){
+            log.error("查询单个美食信息失败,{}", e.getMessage());
+            return OPResult.FAIL(e);
+        }
+    }
+
+    /**
+     * 查询单个住宿信息
+     * @param dormitoryId
+     * @return
+     * */
+    @PostMapping("/querysingledormitory")
+    public OPResult querySingleDormitory(@RequestBody String dormitoryId){
+        try {
+            log.info("查询单个住宿信息开始");
+            DormitoryVO dormitoryVO = cityService.querySingleDormitory(dormitoryId);
+            log.info("查询单个住宿信息成功");
+            return OPResult.SUCCESS(dormitoryVO);
+        }
+        catch (Exception e){
+            log.error("查询单个住宿信息失败,{}", e.getMessage());
+            return OPResult.FAIL(e);
+        }
+    }
 }

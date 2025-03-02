@@ -1,7 +1,7 @@
 package com.op.citybag.demos.web.controller;
 
 import com.op.citybag.demos.web.common.OPResult;
-import com.op.citybag.demos.web.common.dto.AI.AIDTO;
+import com.op.citybag.demos.web.common.DTO.AI.AIDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
