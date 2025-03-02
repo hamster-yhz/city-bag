@@ -10,6 +10,7 @@ import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.service.IUserService;
+import com.op.citybag.demos.utils.Entity2VO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class UserServiceImpl implements IUserService {
         wrapper.eq(Common.USER_ID, userId);
         User user = userMapper.selectOne(wrapper);
         if (user != null) {
-            UserVO userVO = User2UserVO(user);
+            UserVO userVO = Entity2VO.User2UserVO(user);
             log.info("正在缓存用户信息,userId: {}", userId);
             redissonService.setValue(RedisKey.USER_INFO + userId, userVO);
             redissonService.setValueExpired(RedisKey.USER_INFO + userId,  Common.REDIS_EXPIRE_TIME_10_MINUTES);
@@ -72,20 +73,6 @@ public class UserServiceImpl implements IUserService {
         }
 
 
-    }
-
-    private UserVO User2UserVO(User user) {
-        return UserVO.builder()
-                .userId(user.getUserId())
-                .phone(user.getPhone())
-                .userName(user.getUserName())
-                .gender(user.getGender())
-                .birthday(user.getBirthday())
-                .personalizedSignature(user.getPersonalizedSignature())
-                .jurisdiction(user.getJurisdiction())
-                .likeCount(user.getLikeCount())
-                .updateTime(user.getUpdateTime())
-                .build();
     }
 
 }

@@ -11,6 +11,7 @@ import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.service.ILoginService;
+import com.op.citybag.demos.utils.Entity2VO;
 import com.op.citybag.demos.utils.SnowflakeIdWorker;
 import com.op.citybag.demos.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class LoginServiceImpl implements ILoginService {
 
         String token = createToken(user);
 
-        LoginVO loginVO = User2LoginVO(user);
+        LoginVO loginVO = Entity2VO.User2LoginVO(user);
         loginVO.setAccessToken(token);
 
         return loginVO;
@@ -70,7 +71,7 @@ public class LoginServiceImpl implements ILoginService {
         } else {
             String token = createToken(user);
 
-            LoginVO loginVO = User2LoginVO(user);
+            LoginVO loginVO = Entity2VO.User2LoginVO(user);
             loginVO.setAccessToken(token);
 
             return loginVO;
@@ -190,24 +191,6 @@ public class LoginServiceImpl implements ILoginService {
             redissonService.remove(RedisKey.TOKEN + token);
         }
         redissonService.remove(RedisKey.USER_TO_TOKEN + userId);
-    }
-
-    /**
-     * User转LoginVO
-     */
-    private LoginVO User2LoginVO(User user) {
-        return LoginVO.builder()
-                .userId(user.getUserId())
-                .phone(user.getPhone())
-                .stuId(user.getStuId())
-                .userName(user.getUserName())
-                .gender(user.getGender())
-                .birthday(user.getBirthday())
-                .personalizedSignature(user.getPersonalizedSignature())
-                .jurisdiction(user.getJurisdiction())
-                .likeCount(user.getLikeCount())
-                .updateTime(user.getUpdateTime())
-                .build();
     }
 
 }

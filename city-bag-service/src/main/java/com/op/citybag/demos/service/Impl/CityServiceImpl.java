@@ -1,5 +1,6 @@
 package com.op.citybag.demos.service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.op.citybag.demos.exception.AppException;
 import com.op.citybag.demos.mapper.CityMapper;
@@ -10,6 +11,9 @@ import com.op.citybag.demos.model.Entity.City;
 import com.op.citybag.demos.model.Entity.Dormitory;
 import com.op.citybag.demos.model.Entity.Food;
 import com.op.citybag.demos.model.Entity.ScenicSpot;
+import com.op.citybag.demos.model.VO.page.cover.DormitoryCoverVO;
+import com.op.citybag.demos.model.VO.page.cover.FoodCoverVO;
+import com.op.citybag.demos.model.VO.page.cover.ScenicSpotCoverVO;
 import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
 import com.op.citybag.demos.model.VO.page.list.FoodListVO;
 import com.op.citybag.demos.model.VO.page.list.ScenicSpotListVO;
@@ -17,6 +21,7 @@ import com.op.citybag.demos.model.VO.page.object.CityVO;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.oss.OSSServiceImpl;
 import com.op.citybag.demos.service.ICityService;
+import com.op.citybag.demos.utils.Entity2VO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,11 +69,11 @@ public class CityServiceImpl implements ICityService {
         }
 
         // 转换为VO
-        CityVO cityVO = City2SingleCityVO(city);
+        CityVO cityVO = Entity2VO.City2CityVO(city);
 
         // 查询城市图片
         String cityImg = ossDemoService.generatePresignedUrl
-                (city.getImage_url(), 1000000000);
+                (city.getImageUrl(), 1000000000);
         cityVO.setCityImg(cityImg);
 
         return cityVO;
@@ -77,50 +82,73 @@ public class CityServiceImpl implements ICityService {
     @Override
     public ScenicSpotListVO queryCityScenicSpot(String cityId) {
 
-        // 查询景点列表
-        List<ScenicSpot> spots = scenicSpotMapper.selectList(
-                new QueryWrapper<ScenicSpot>().eq("city_id", cityId)
-        );
+        // 查询景点封面列表
+        List<ScenicSpotCoverVO> coverList = scenicSpotMapper.selectList(
+                new LambdaQueryWrapper<ScenicSpot>()
+                        .eq(ScenicSpot::getCityId, cityId)
+                        .select(
+                                ScenicSpot::getScenicSpotId,
+                                ScenicSpot::getScenicSpotName,
+                                ScenicSpot::getImageUrl
+                        )
+        ).stream().map(spot -> ScenicSpotCoverVO.builder()
+                .scenicSpotId(spot.getScenicSpotId())
+                .scenicSpotName(spot.getScenicSpotName())
+                .scenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(), 1000000000))
+                .build()
+        ).collect(java.util.stream.Collectors.toList());
 
         return ScenicSpotListVO.builder()
                 .cityId(cityId)
-                .scenicSpotList(spots)
+                .scenicSpotList(coverList)
                 .build();
     }
 
     @Override
     public FoodListVO queryCityFood(String cityId) {
-        List<Food> foods = foodMapper.selectList(
-                new QueryWrapper<Food>().eq("city_id", cityId)
-        );
+        // 查询美食封面列表
+        List<FoodCoverVO> coverList = foodMapper.selectList(
+                new LambdaQueryWrapper<Food>()
+                        .eq(Food::getCityId, cityId)
+                        .select(
+                                Food::getFoodId,
+                                Food::getFoodName,
+                                Food::getImageUrl
+                        )
+        ).stream().map(spot -> FoodCoverVO.builder()
+                .foodId(spot.getFoodId())
+                .foodName(spot.getFoodName())
+                .foodImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(), 1000000000))
+                .build()
+        ).collect(java.util.stream.Collectors.toList());
         return FoodListVO.builder()
                 .cityId(cityId)
-                .foodList(foods)
+                .foodList(coverList)
                 .build();
     }
 
     @Override
     public DormitoryListVO queryCityDormitory(String cityId) {
-        List<Dormitory> dormitories = dormitoryMapper.selectList(
-                new QueryWrapper<Dormitory>().eq("city_id", cityId)
-        );
+        // 查询住宿封面列表
+        List<DormitoryCoverVO> coverList = dormitoryMapper.selectList(
+                new LambdaQueryWrapper<Dormitory>()
+                        .eq(Dormitory::getCityId, cityId)
+                        .select(
+                                Dormitory::getDormitoryId,
+                                Dormitory::getDormitoryName,
+                                Dormitory::getImageUrl
+                        )
+        ).stream().map(spot -> DormitoryCoverVO.builder()
+                .dormitoryId(spot.getDormitoryId())
+                .dormitoryName(spot.getDormitoryName())
+                .dormitoryImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(), 1000000000))
+                .build()
+        ).collect(java.util.stream.Collectors.toList());
         return DormitoryListVO.builder()
                 .cityId(cityId)
-                .dormitoryList(dormitories)
+                .dormitoryList(coverList)
                 .build();
     }
 
-    /**
-     * City转CityVO
-     */
-    private CityVO City2SingleCityVO(City city) {
-        return CityVO.builder()
-                .cityId(city.getCityId())
-                .cityName(city.getCityName())
-                .cityIntroduce(city.getCityIntroduce())
-                .foodIntroduce(city.getFoodIntroduce())
-                .scenicSpotIntroduce(city.getScenicSpotIntroduce())
-                .likeCount(city.getLikeCount())
-                .build();
-    }
+
 }

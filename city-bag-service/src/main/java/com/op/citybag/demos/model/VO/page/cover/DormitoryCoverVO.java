@@ -20,6 +20,6 @@ public class DormitoryCoverVO {
 
     private String dormitoryName;
 
-    private String DormitoryImg;
+    private String dormitoryImg;
 }
 

@@ -31,7 +31,7 @@ public class Food {
     private String introduce;
 
     @TableField("image_url")
-    private String image_url;
+    private String imageUrl;
 
     @TableField("like_count")
     private Integer likeCount;
