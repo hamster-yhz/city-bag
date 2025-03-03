@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
     
     // 点赞消息队列配置
-    public static final String LIKE_QUEUE = "likeQueue";
-    public static final String LIKE_EXCHANGE = "likeExchange";
-    public static final String LIKE_ROUTING_KEY = "likeRoutingKey";
+    public static final String LIKE_QUEUE = "like.queue";
+    public static final String LIKE_EXCHANGE = "like.exchange";
+    public static final String LIKE_ROUTING_KEY = "like.routingKey";
     
     @Bean
     public Queue likeQueue() {

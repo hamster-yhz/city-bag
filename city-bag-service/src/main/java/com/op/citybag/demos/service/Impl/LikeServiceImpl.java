@@ -8,7 +8,7 @@ import com.op.citybag.demos.model.common.LuaScripts;
 import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.model.message.LikeMessage;
 import com.op.citybag.demos.rabbitmq.RabbitMQConfig;
-import com.op.citybag.demos.redis.RedissonService;
+import com.op.citybag.demos.redis.IRedisService;
 import com.op.citybag.demos.service.ILikeService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class LikeServiceImpl implements ILikeService {
 
     @Autowired
-    private RedissonService redissonService;
+    private IRedisService redisService;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -55,9 +55,13 @@ public class LikeServiceImpl implements ILikeService {
         String userLockKey = RedisKey.LIKE_USER_LOCK + userId + ":" + entityType + ":" + entityId;
 
         try {
-            RLock lock = redissonService.getLock(lockKey);
+
+            log.info("尝试 {} ,用户:{},实体:{},类型:{}", action, userId, entityId, entityType);
+            // 尝试获取分布式锁
+            RLock lock = redisService.getLock(lockKey);
             if (lock.tryLock(3, 10, TimeUnit.SECONDS)) {
-                Long result = redissonService.executeLuaScript(
+                // 执行Lua脚本
+                Long result = redisService.executeLuaScript(
                         LuaScripts.LIKE_SCRIPT,
                         Arrays.asList(setKey, userLockKey),
                         action, "86400", userId
@@ -67,6 +71,7 @@ public class LikeServiceImpl implements ILikeService {
                 if (result != null) {
                     int delta = result.intValue();
                     if (delta != 0) {
+                        // 发送消息到消息队列
                         LikeMessage message = new LikeMessage(
                                 entityType + ":" + entityId,
                                 delta,
@@ -84,30 +89,31 @@ public class LikeServiceImpl implements ILikeService {
                 }
             }
         } catch (InterruptedException e) {
+            //TODO 异常处理
             Thread.currentThread().interrupt();
             log.error("操作被中断：{}", e.getMessage());
         } finally {
-            redissonService.unLock(lockKey);
+            redisService.unLock(lockKey);
         }
     }
 
     private void updateRedisCache(String entityType, String entityId, int delta) {
         String cacheKey = getCacheKey(entityType, entityId);
-        RLock cacheLock = redissonService.getLock(cacheKey + ":lock");
+        RLock cacheLock = redisService.getLock(cacheKey + ":lock");
 
         try {
             if (cacheLock.tryLock(2, 5, TimeUnit.SECONDS)) {
                 // 双检锁保证缓存更新原子性
-                Object cached = redissonService.getValue(cacheKey);
+                Object cached = redisService.getValue(cacheKey);
                 if (cached == null) {
                     // 缓存不存在时从DB加载
                     Object entity = loadFromDB(entityType, entityId);
                     if (entity != null) {
-                        redissonService.setValue(cacheKey, entity, 3600 * 1000); // 1小时过期
+                        redisService.setValue(cacheKey, entity, 3600 * 1000); // 1小时过期
                     }
                 } else {
                     // 原子操作更新点赞数
-                    redissonService.executeLuaScript(
+                    redisService.executeLuaScript(
                             "redis.call('HINCRBY', KEYS[1], 'likeCount', ARGV[1])",
                             Collections.singletonList(cacheKey),
                             delta
@@ -142,5 +148,6 @@ public class LikeServiceImpl implements ILikeService {
             default -> null;
         };
     }
+
 }
 

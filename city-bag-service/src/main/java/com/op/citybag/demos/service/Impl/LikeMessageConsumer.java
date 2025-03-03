@@ -55,6 +55,8 @@ public class LikeMessageConsumer {
 
     private <T> void updateWithOptimisticLock(BaseMapper<T> mapper, String entityType, String id, int delta) {
         int retry = 3;
+
+
         while (retry-- > 0) {
             T entity = mapper.selectById(id);
             if (entity == null) return;
@@ -81,9 +83,9 @@ public class LikeMessageConsumer {
                     return;
                 }
             } catch (Exception e) {
-                log.error("更新点赞数失败: {}", e.getMessage());
+                log.info("更新点赞数失败: {}", e.getMessage());
             }
         }
-        log.error("乐观锁重试失败 entityType:{} id:{}", entityType, id);
+        log.info("乐观锁重试失败 entityType:{} id:{}", entityType, id);
     }
 }

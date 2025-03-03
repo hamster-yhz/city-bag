@@ -32,11 +32,13 @@ public class LikeController {
     public OPResult toggleLike(@RequestBody LikeRequestDTO likeRequestDTO) {
 
         try {
-            log.info("点赞开始,用户");
+            log.info("操作 {} 开始,用户:{},实体:{},类型:{}",likeRequestDTO.getAction(), likeRequestDTO.getUserId(), likeRequestDTO.getEntityId(), likeRequestDTO.getEntityType());
             likeService.toggleLike(likeRequestDTO.getUserId(), likeRequestDTO.getEntityId(),likeRequestDTO.getEntityType(), likeRequestDTO.getAction());
+            log.info("操作 {} 开始,用户:{},实体:{},类型:{}",likeRequestDTO.getAction(), likeRequestDTO.getUserId(), likeRequestDTO.getEntityId(), likeRequestDTO.getEntityType());
             return OPResult.SUCCESS();
         }
         catch (Exception e) {
+            log.info("操作 {} 失败,用户:{},实体:{},类型:{}",likeRequestDTO.getAction(), likeRequestDTO.getUserId(), likeRequestDTO.getEntityId(), likeRequestDTO.getEntityType());
             return OPResult.FAIL(e);
         }
 
