@@ -2,6 +2,7 @@ package com.op.citybag.demos.redis;
 
 import org.redisson.api.*;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -335,4 +336,26 @@ public interface IRedisService {
 
     Boolean setNx(String key, long expired, TimeUnit timeUnit);
 
+
+    /**
+     * 执行 Lua 脚本
+     *
+     * @param scriptContent 脚本内容
+     * @param keys          键
+     * @param args          参数
+     * @param <T>           返回结果
+     * @return 返回结果
+     */
+    <T> T executeLuaScript(String scriptContent, Collection<String> keys, Object... args);
+
+    /**
+     * 通过sha摘要执行预存 Lua 脚本
+     *
+     * @param shaDigest 脚本内容
+     * @param keys      键
+     * @param args      参数
+     * @param <T>       返回结果
+     * @return 返回结果
+     */
+    <T> T executeLuaScriptBySha(String shaDigest, Collection<String> keys, Object... args);
 }

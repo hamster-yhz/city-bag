@@ -5,8 +5,7 @@ import org.redisson.api.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -222,4 +221,30 @@ public class RedissonService implements IRedisService {
         return redissonClient.getBucket(key).trySet("lock", expired, timeUnit);
     }
 
+    @Override
+    public <T> T executeLuaScript(String scriptContent, Collection<String> keys, Object... args) {
+        RScript script = redissonClient.getScript();
+
+        List<Object> keyList = new ArrayList<>(keys);
+        return script.eval(
+                RScript.Mode.READ_WRITE,
+                scriptContent,
+                RScript.ReturnType.VALUE,
+                keyList,
+                args
+        );
+    }
+
+    @Override
+    public <T> T executeLuaScriptBySha(String shaDigest, Collection<String> keys, Object... args) {
+        RScript script = redissonClient.getScript();
+        List<Object> keyList = new ArrayList<>(keys);
+        return script.evalSha(
+                RScript.Mode.READ_WRITE,
+                shaDigest,
+                RScript.ReturnType.VALUE,
+                keyList,
+                args
+        );
+    }
 }

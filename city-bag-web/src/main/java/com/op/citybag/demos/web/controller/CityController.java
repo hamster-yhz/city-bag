@@ -8,9 +8,8 @@ import com.op.citybag.demos.model.VO.page.object.DormitoryVO;
 import com.op.citybag.demos.model.VO.page.object.FoodVO;
 import com.op.citybag.demos.model.VO.page.object.ScenicSpotVO;
 import com.op.citybag.demos.service.ICityService;
+import com.op.citybag.demos.web.common.DTO.city.*;
 import com.op.citybag.demos.web.common.OPResult;
-import com.op.citybag.demos.web.common.DTO.city.QueryCityContentDTO;
-import com.op.citybag.demos.web.common.DTO.city.QuerySingleCityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,14 +119,14 @@ public class CityController {
 
     /**
      * 查询单个景点信息
-     * @param scenicSpotId
+     * @param querySingleScenicSpotDTOsingleScenicSpotDTO
      * @return
      **/
     @PostMapping("/querysinglescenicspot")
-    public OPResult querySingleScenicSpot(@RequestBody String scenicSpotId){
+    public OPResult querySingleScenicSpot(@RequestBody QuerySingleScenicSpotDTO querySingleScenicSpotDTOsingleScenicSpotDTO){
         try {
             log.info("查询单个景点信息开始");
-            ScenicSpotVO scenicSpotVO = cityService.querySingleScenicSpot(scenicSpotId);
+            ScenicSpotVO scenicSpotVO = cityService.querySingleScenicSpot(querySingleScenicSpotDTOsingleScenicSpotDTO.getScenicSpotId());
             log.info("查询单个景点信息成功");
             return OPResult.SUCCESS(scenicSpotVO);
         }
@@ -139,14 +138,14 @@ public class CityController {
 
     /**
      * 查询单个美食信息
-     * @param foodId
+     * @param querySingleFoodDTO
      * @return
      **/
     @PostMapping("/querysinglefood")
-    public OPResult querySingleFood(@RequestBody String foodId){
+    public OPResult querySingleFood(@RequestBody QuerySingleFoodDTO querySingleFoodDTO){
         try {
             log.info("查询单个美食信息开始");
-            FoodVO foodVO = cityService.querySingleFood(foodId);
+            FoodVO foodVO = cityService.querySingleFood(querySingleFoodDTO.getFoodId());
             log.info("查询单个美食信息成功");
             return OPResult.SUCCESS(foodVO);
         }
@@ -158,14 +157,14 @@ public class CityController {
 
     /**
      * 查询单个住宿信息
-     * @param dormitoryId
+     * @param querySingleDormitoryDTO
      * @return
      * */
     @PostMapping("/querysingledormitory")
-    public OPResult querySingleDormitory(@RequestBody String dormitoryId){
+    public OPResult querySingleDormitory(@RequestBody QuerySingleDormitoryDTO querySingleDormitoryDTO){
         try {
             log.info("查询单个住宿信息开始");
-            DormitoryVO dormitoryVO = cityService.querySingleDormitory(dormitoryId);
+            DormitoryVO dormitoryVO = cityService.querySingleDormitory(querySingleDormitoryDTO.getDormitoryId());
             log.info("查询单个住宿信息成功");
             return OPResult.SUCCESS(dormitoryVO);
         }
