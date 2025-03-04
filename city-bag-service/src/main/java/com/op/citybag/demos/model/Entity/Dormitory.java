@@ -36,6 +36,9 @@ public class Dormitory {
     @TableField("type")
     private Integer type;
 
+    @Version
+    private Integer version;
+
     @TableField("like_count")
     private Integer likeCount;
 

@@ -51,6 +51,7 @@ public enum GlobalServiceStatusCode {
     SCENIC_SPOT_NOT_EXIST(3003, "景点不存在"),
     FOOD_NOT_EXIST(3004, "美食不存在"),
     CITY_HAS_NO_SPOT(3005, "城市暂无景点"),
+    ENTITY_NOT_EXIST(3006, "实体不存在"),
     OSS_ERROR(3002, "OSS异常"),
 
     /* 登录模块错误 6001-7000*/

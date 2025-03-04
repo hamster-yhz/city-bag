@@ -54,17 +54,19 @@ public class LikeServiceImpl implements ILikeService {
         String setKey = RedisKey.LIKE_SET + entityType + ":" + entityId;
         String userLockKey = RedisKey.LIKE_USER_LOCK + userId + ":" + entityType + ":" + entityId;
 
+        RLock lock = null;
+
         try {
 
             log.info("尝试 {} ,用户:{},实体:{},类型:{}", action, userId, entityId, entityType);
             // 尝试获取分布式锁
-            RLock lock = redisService.getLock(lockKey);
+            lock = redisService.getLock(lockKey);
             if (lock.tryLock(3, 10, TimeUnit.SECONDS)) {
                 // 执行Lua脚本
                 Long result = redisService.executeLuaScript(
                         LuaScripts.LIKE_SCRIPT,
                         Arrays.asList(setKey, userLockKey),
-                        action, "86400", userId
+                        action, "864000", userId
                 );
 
 
@@ -93,7 +95,7 @@ public class LikeServiceImpl implements ILikeService {
             Thread.currentThread().interrupt();
             log.error("操作被中断：{}", e.getMessage());
         } finally {
-            redisService.unLock(lockKey);
+            redisService.unLock(lock);
         }
     }
 

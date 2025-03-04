@@ -15,6 +15,7 @@ import com.op.citybag.demos.utils.Entity2VO;
 import com.op.citybag.demos.utils.SnowflakeIdWorker;
 import com.op.citybag.demos.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,8 +126,13 @@ public class LoginServiceImpl implements ILoginService {
                     .userName("op")
                     .build();
             //创建用户
+
+            String key = RedisKey.NEW_USER_LOCK + openid;
+            RLock lock = null;
             try {
-                redissonService.getLock(RedisKey.NEW_USER_LOCK + openid).tryLock(Common.TRY_LOCK_TIME, TimeUnit.SECONDS);
+                lock = redissonService.getLock(key + openid);
+
+                lock.tryLock(Common.TRY_LOCK_TIME, TimeUnit.SECONDS);
                 if (userMapper.selectOne(queryWrapper) == null) {
                     userMapper.insert(user);
                 }
@@ -134,7 +140,7 @@ public class LoginServiceImpl implements ILoginService {
                 log.info("注册失败,openid:{},phoneNumber:{}", openid, phoneNumber);
                 throw new AppException(String.valueOf(GlobalServiceStatusCode.USER_ACCOUNT_REGISTER_ERROR.getCode()), GlobalServiceStatusCode.USER_ACCOUNT_REGISTER_ERROR.getMessage());
             } finally {
-                redissonService.unLock(RedisKey.NEW_USER_LOCK + openid);
+                redissonService.unLock(lock);
             }
 
             log.info("注册成功,openid:{},phoneNumber:{}", openid, phoneNumber);

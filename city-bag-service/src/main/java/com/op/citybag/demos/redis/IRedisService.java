@@ -276,9 +276,9 @@ public interface IRedisService {
     /**
      * 释放 Redis 锁
      *
-     * @param key 键
+     * @param lock 锁
      */
-    void unLock(String key);
+    void unLock(RLock lock);
 
     /**
      * 获取 Redis 锁（公平锁）
@@ -343,10 +343,9 @@ public interface IRedisService {
      * @param scriptContent 脚本内容
      * @param keys          键
      * @param args          参数
-     * @param <T>           返回结果
      * @return 返回结果
      */
-    <T> T executeLuaScript(String scriptContent, Collection<String> keys, Object... args);
+    Long executeLuaScript(String scriptContent, Collection<String> keys, Object... args);
 
     /**
      * 通过sha摘要执行预存 Lua 脚本

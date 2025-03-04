@@ -177,8 +177,10 @@ public class RedissonService implements IRedisService {
     }
 
     @Override
-    public void unLock(String key) {
-        redissonClient.getLock(key).unlock();
+    public void unLock(RLock lock) {
+        if (lock != null && lock.isHeldByCurrentThread()) {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -222,7 +224,7 @@ public class RedissonService implements IRedisService {
     }
 
     @Override
-    public <T> T executeLuaScript(String scriptContent, Collection<String> keys, Object... args) {
+    public Long executeLuaScript(String scriptContent, Collection<String> keys, Object... args) {
         RScript script = redissonClient.getScript();
 
         List<Object> keyList = new ArrayList<>(keys);

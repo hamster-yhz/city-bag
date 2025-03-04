@@ -33,6 +33,9 @@ public class Food {
     @TableField("image_url")
     private String imageUrl;
 
+    @Version
+    private Integer version;
+
     @TableField("like_count")
     private Integer likeCount;
 

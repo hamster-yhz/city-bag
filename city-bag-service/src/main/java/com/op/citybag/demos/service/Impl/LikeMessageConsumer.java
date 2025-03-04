@@ -1,17 +1,24 @@
 package com.op.citybag.demos.service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.op.citybag.demos.exception.AppException;
 import com.op.citybag.demos.mapper.CityMapper;
 import com.op.citybag.demos.mapper.DormitoryMapper;
 import com.op.citybag.demos.mapper.FoodMapper;
 import com.op.citybag.demos.mapper.ScenicSpotMapper;
+import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.model.message.LikeMessage;
+import com.op.citybag.demos.rabbitmq.RabbitMQConfig;
 import com.op.citybag.demos.redis.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -31,8 +38,9 @@ public class LikeMessageConsumer {
 
     private final RedissonService redissionService;
 
-    @RabbitListener(queues = "like.queue")
-    public void processLikeMessage(LikeMessage message) {
+    @RabbitListener(queues = RabbitMQConfig.LIKE_QUEUE)
+    public void processLikeMessage(@Payload LikeMessage message,
+                                   @Header(AmqpHeaders.CONSUMER_QUEUE) String queue) {
         String[] parts = message.getEntityId().split(":");
         String entityType = parts[0];
         String id = parts[1];
@@ -56,12 +64,29 @@ public class LikeMessageConsumer {
     private <T> void updateWithOptimisticLock(BaseMapper<T> mapper, String entityType, String id, int delta) {
         int retry = 3;
 
+        // 根据实体类型确定业务ID字段名
+//        String bizIdField = switch (entityType) {
+//            case "city" -> "city_id";
+//            case "food" -> "food_id";
+//            case "dormitory" -> "dormitory_id";
+//            case "scenic_spot" -> "scenic_spot_id";
+//            default -> throw new IllegalArgumentException("无效的实体类型");
+//        };
+
+        // 按业务ID查询
+        QueryWrapper<T> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(entityType+"_id", id);
+        T entity = mapper.selectOne(queryWrapper);
+
+        if (entity == null) {
+            log.info("未找到对应实体 entityType:{} bizId:{}", entityType, id);
+            throw new AppException(GlobalServiceStatusCode.ENTITY_NOT_EXIST.getMessage(), String.valueOf(GlobalServiceStatusCode.ENTITY_NOT_EXIST.getCode()));
+        }
 
         while (retry-- > 0) {
-            T entity = mapper.selectById(id);
-            if (entity == null) return;
 
             try {
+                log.info("正在尝试从数据库更新 entityType:{} : id:{} 的点赞数量", entityType, id);
                 // 反射设置version和likeCount
                 Method setVersion = entity.getClass().getMethod("setVersion", Integer.class);
                 Method getVersion = entity.getClass().getMethod("getVersion");
