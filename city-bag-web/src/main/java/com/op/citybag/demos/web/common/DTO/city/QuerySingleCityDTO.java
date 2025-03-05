@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 public class QuerySingleCityDTO {
 
     /**
-     * 城市名称(精确查询)
+     * 城市名称
      */
     @NotBlank(message = "城市名称不能为空")
     private String cityName;

@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: 原神
@@ -86,6 +87,31 @@ public class CityServiceImpl implements ICityService {
         cityVO.setCityImg(cityImg);
 
         return cityVO;
+    }
+
+    @Override
+    public List<CityVO> queryCityLike(String cityName) {
+
+        // 构建查询条件
+        QueryWrapper<City> wrapper = new QueryWrapper<>();
+        wrapper.like("city_name", cityName);
+        // 执行查询
+        List<City> cityList = cityMapper.selectList(wrapper);
+
+        if (cityList.isEmpty()) {
+            log.info("未找到城市: {}", cityName);
+            throw new AppException(String.valueOf(GlobalServiceStatusCode.CITY_NOT_EXIST.getCode()), GlobalServiceStatusCode.CITY_NOT_EXIST.getMessage());
+
+        }
+
+        // 转换逻辑
+        List<CityVO> cityVOList = cityList.stream().map(city -> {
+            CityVO cityVO = Entity2VO.City2CityVO(city);
+            cityVO.setCityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(), 1000000000));
+            return cityVO;
+        }).collect(Collectors.toList());
+
+        return cityVOList;
     }
 
     @Override

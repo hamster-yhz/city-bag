@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @Author: 原神
  * @Description: 城市控制器
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController()
 @CrossOrigin("${app.config.cross-origin}")
-@RequestMapping("/api/v1/auth/")//测试
+@RequestMapping("/api/v1/city/")//测试
 @RequiredArgsConstructor
 public class CityController {
 
@@ -54,6 +56,29 @@ public class CityController {
             return OPResult.FAIL(e);
         }
     }
+
+    /**
+     * 查询单个城市信息(模糊匹配)
+     * @param querySingleCityDTO
+     * @return 城市信息
+     */
+    @PostMapping("/queryCityLike")
+    public OPResult queryCityLike(@RequestBody QuerySingleCityDTO querySingleCityDTO){
+        try {
+            log.info("查询城市信息开始");
+
+            List<CityVO> cityVOs = cityService.queryCityLike(querySingleCityDTO.getCityName());
+
+            log.info("查询城市信息成功");
+            return OPResult.SUCCESS(cityVOs);
+        }
+        catch (Exception e){
+            log.error("查询城市信息失败,{}", e.getMessage());
+            return OPResult.FAIL(e);
+        }
+    }
+
+
 
 
     /**

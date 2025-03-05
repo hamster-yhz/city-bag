@@ -8,6 +8,8 @@ import com.op.citybag.demos.model.VO.page.object.DormitoryVO;
 import com.op.citybag.demos.model.VO.page.object.FoodVO;
 import com.op.citybag.demos.model.VO.page.object.ScenicSpotVO;
 
+import java.util.List;
+
 public interface ICityService {
 
     /**
@@ -16,6 +18,13 @@ public interface ICityService {
      * @return 城市信息
      **/
     CityVO querySingleCity(String cityName);
+
+    /**
+     * 查询单个城市信息(模糊匹配)
+     * @param cityName
+     * @return 城市信息
+     */
+    List<CityVO> queryCityLike(String cityName);
 
     /**
      * 查询城市对应的景点
