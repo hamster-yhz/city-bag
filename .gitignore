@@ -112,3 +112,13 @@ circleci/
 # 忽略其他特定的文件或目录
 specific_file.txt
 specific_directory/
+
+
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
