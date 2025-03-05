@@ -13,6 +13,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
@@ -24,15 +25,16 @@ public class RabbitMQConfig implements RabbitTemplate.ConfirmCallback,RabbitTemp
     public static final String LIKE_EXCHANGE = "like.exchange";
     public static final String LIKE_ROUTING_KEY = "like.routingKey";
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-
-    @PostConstruct
-    public void initRabbitMQ() {
-        rabbitTemplate.setMandatory(true);
-        rabbitTemplate.setConfirmCallback(this);
-        rabbitTemplate.setReturnsCallback(this);
-    }
+//    @Autowired
+//    @Lazy
+//    private RabbitTemplate rabbitTemplate;
+//
+//    @PostConstruct
+//    public void initRabbitMQ() {
+//        rabbitTemplate.setMandatory(true);
+//        rabbitTemplate.setConfirmCallback(this);
+//        rabbitTemplate.setReturnsCallback(this);
+//    }
 
     @Bean
     public MessageConverter jackson2JsonMessageConverter() {

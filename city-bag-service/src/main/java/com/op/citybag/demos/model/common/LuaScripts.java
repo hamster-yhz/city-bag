@@ -19,18 +19,18 @@ public class LuaScripts {
                     "    return 0\n" +
                     "end\n\n" +
 
-                    "if action == 'like' then\n" +  // 点赞分支
+                    "if action == '\"like\"' then\n" +  // 点赞分支
                     "    if redis.call('SADD', key, userId) == 1 then\n" +
                     "        redis.call('EXPIRE', key, expire)\n" +
                     "        redis.call('SET', userKey, 1, 'EX', 5)\n" +
                     "        return 1\n" +
                     "    end\n" +
-                    "elseif action == 'unlike' then\n" +  // 取消点赞分支
+                    "elseif action == '\"unlike\"' then\n" +  // 取消点赞分支
                     "    if redis.call('SREM', key, userId) == 1 then\n" +
                     "        redis.call('SET', userKey, 1, 'EX', 5)\n" +
                     "        return -1\n" +  // 返回负值表示取消
                     "    end\n" +
                     "end\n" +
-//                    "return 0";
-                    "return 1";// 默认为点赞操作
+                    "return 0";
+//                    "return 1";// 默认为点赞操作
 }

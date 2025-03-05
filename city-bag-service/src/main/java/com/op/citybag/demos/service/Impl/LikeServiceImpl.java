@@ -66,7 +66,7 @@ public class LikeServiceImpl implements ILikeService {
                 Long result = redisService.executeLuaScript(
                         LuaScripts.LIKE_SCRIPT,
                         Arrays.asList(setKey, userLockKey),
-                        action, "864000", userId
+                        action, 864000, userId
                 );
 
 

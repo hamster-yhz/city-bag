@@ -21,13 +21,18 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController()
 @CrossOrigin("${app.config.cross-origin}")
-@RequestMapping("/api/v1/auth/")//测试
+@RequestMapping("/api/v1/like/")//测试
 @RequiredArgsConstructor
 public class LikeController {
 
     @Autowired
     private final ILikeService likeService;
 
+    /**
+     * 对实体进行点赞或者取消点赞
+     * @param likeRequestDTO
+     * @return
+     */
     @PostMapping("/toggle")
     public OPResult toggleLike(@RequestBody LikeRequestDTO likeRequestDTO) {
 
