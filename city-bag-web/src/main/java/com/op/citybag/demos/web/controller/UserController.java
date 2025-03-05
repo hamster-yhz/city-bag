@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController()
 @CrossOrigin("${app.config.cross-origin}")
-@RequestMapping("/api/v1/auth/")//测试
+@RequestMapping("/api/v1/user/")//测试
 @RequiredArgsConstructor
 public class UserController {
 
