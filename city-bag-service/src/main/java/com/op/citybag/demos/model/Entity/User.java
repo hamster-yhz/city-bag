@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,11 +52,30 @@ public class User {
     @TableField("user_name")
     private String userName;
 
+    @TableField("image_url")
+    private String imageUrl;
+
     @TableField("phone")
     private String phone;
 
+    /**
+     * 1-微信
+     * 2-学号
+     */
+    @TableField("auth_type")
+    private Integer authType;
+
+    @TableField("auth_key")
+    private String authKey;
+
+    @TableField("auth_secret")
+    private String authSecret;
+
     @TableField("openid")
     private String openid;
+
+    @TableField("unionid")
+    private String unionid;
 
     @TableField("stu_id")
     private String stuId;
@@ -74,9 +94,6 @@ public class User {
 
     @TableField("personalized_signature")
     private String personalizedSignature;
-
-    @TableField("image_url")
-    private String imageUrl;
 
     /**
      * 0: 普通用户

@@ -2,7 +2,6 @@ package com.op.citybag.demos.web.controller;
 
 import com.op.citybag.demos.service.ILikeService;
 import com.op.citybag.demos.web.common.DTO.like.LikeRequestDTO;
-import com.op.citybag.demos.web.common.DTO.login.WxLoginDTO;
 import com.op.citybag.demos.web.common.OPResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

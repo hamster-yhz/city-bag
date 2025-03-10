@@ -3,6 +3,7 @@ package com.op.citybag.demos.web.controller;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import com.op.citybag.demos.model.VO.login.LoginVO;
 import com.op.citybag.demos.service.ILoginService;
+import com.op.citybag.demos.service.INewLoginService;
 import com.op.citybag.demos.web.common.OPResult;
 import com.op.citybag.demos.web.common.DTO.login.ChangePasswordDTO;
 import com.op.citybag.demos.web.common.DTO.login.StuLoginDTO;
@@ -33,7 +34,7 @@ public class LoginController {
 
 
     @Autowired
-    private final ILoginService loginService;
+    private final INewLoginService loginService;
 
     @Autowired
     private final WxMaService wxMaService;
@@ -51,18 +52,21 @@ public class LoginController {
             // 微信登陆获取openid和phoneNumber
 //            WxMaJscode2SessionResult session = wxMaService.getUserService().getSessionInfo(wxLoginDTO.getCode());
 //            String openid = session.getOpenid();
+
 //            WxMaPhoneNumberInfo numberInfo = wxMaService.getUserService().getNewPhoneNoInfo(wxLoginDTO.getPhoneCode());
 //            String phoneNumber = numberInfo.getPhoneNumber();
 
+
+//            String unionId = session.getUnionid(); // 需配置开放平台
+
             // 测试用
             String openid = wxLoginDTO.getCode();
-            String phoneNumber = wxLoginDTO.getPhoneCode();
 
-            log.info("微信登陆开始,openid:{},phoneNumber:{}",openid,phoneNumber);
+            log.info("微信登陆开始,openid:{}",openid);
 
-            LoginVO loginVO = loginService.wxLogin(openid,phoneNumber);
+            LoginVO loginVO = loginService.wxLogin(openid);
 
-            log.info("微信登陆成功,openid:{},phoneNumber:{}",openid,phoneNumber);
+            log.info("微信登陆成功,openid:{}",openid);
             return OPResult.SUCCESS(loginVO);
         }catch (Exception e){
             log.error("微信登陆失败,cuz:{}",e);
@@ -76,11 +80,13 @@ public class LoginController {
     @PostMapping("stulogin")
     public OPResult stuLogin(@RequestBody StuLoginDTO stuLoginDTO) {
         try{
+
             log.info("学号登陆开始,stuId:{}",stuLoginDTO.getStuId());
 
             LoginVO loginVO = loginService.stuLogin(stuLoginDTO.getStuId(), stuLoginDTO.getPassword());
 
             log.info("学号登陆成功,stuId:{}",stuLoginDTO.getStuId());
+
             return OPResult.SUCCESS(loginVO);
         }catch (Exception e){
             log.error("学号登陆失败,stuId:{},cuz:{}",stuLoginDTO.getStuId(),e.getMessage());

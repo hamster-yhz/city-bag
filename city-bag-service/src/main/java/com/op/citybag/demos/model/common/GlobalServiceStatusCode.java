@@ -34,6 +34,8 @@ public enum GlobalServiceStatusCode {
     /* 用户错误 2001-3000 */
     USER_NOT_LOGIN(2001, "用户未登录"),
     USER_CREDENTIALS_ERROR(2003, "密码错误"),
+    //用户已存在
+    USER_ACCOUNT_EXIST(2004, "用户已存在"),
     USER_ACCOUNT_DISABLE(2005, "账号不可用"),
     USER_ACCOUNT_NOT_EXIST(2007, "暂无此账号，请联系管理员"),
     USER_ACCOUNT_USE_BY_OTHERS(2009, "账号下线"),

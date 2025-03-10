@@ -19,6 +19,18 @@ public class Common {
 
     public static final String USER_ID = "user_id";
 
+    public static final String PHONE_NUMBER = "phone_number";
+
+    public static final String AUTH_KEY = "auth_key";
+
+    public static final String AUTH_SECRET = "auth_secret";
+
+    public static final String AUTH_TYPE = "auth_type";
+
+    public static final Integer WX_USER = 1;
+
+    public static final Integer STU_USER = 2;
+
     public static final long TRY_LOCK_TIME = 5;
 
     /**
