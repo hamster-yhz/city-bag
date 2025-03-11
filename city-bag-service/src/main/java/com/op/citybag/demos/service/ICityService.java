@@ -1,5 +1,7 @@
 package com.op.citybag.demos.service;
 
+import com.op.citybag.demos.model.VO.page.cover.CityCoverVO;
+import com.op.citybag.demos.model.VO.page.list.CityListVO;
 import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
 import com.op.citybag.demos.model.VO.page.list.FoodListVO;
 import com.op.citybag.demos.model.VO.page.list.ScenicSpotListVO;
@@ -14,38 +16,46 @@ public interface ICityService {
 
     /**
      * 查询单个城市信息(精确匹配)
-     * @param cityName
+     * @param cityId
      * @return 城市信息
      **/
-    CityVO querySingleCity(String cityName);
+    CityVO querySingleCity(String cityId);
 
     /**
-     * 查询单个城市信息(模糊匹配)
+     * 查询城市信息(模糊匹配)
      * @param cityName
      * @return 城市信息
      */
-    List<CityVO> queryCityLike(String cityName);
+    CityListVO queryCityLike(String cityName, Integer pageNum, Integer pageSize);
+
+    /**
+     *  查询城市信息
+     * @param cityName
+     * @return
+     */
+    CityListVO queryCityLike(String cityName);
+
 
     /**
      * 查询城市对应的景点
      * @param cityId
      * @return 城市对应的景点
      */
-    ScenicSpotListVO queryCityScenicSpot(String cityId);
+    ScenicSpotListVO queryCityScenicSpot(String cityId, Integer pageNum, Integer pageSize);
 
     /**
      * 查询城市对应的美食
      * @param cityId
      * @return 城市对应的美食
      */
-    FoodListVO queryCityFood(String cityId);
+    FoodListVO queryCityFood(String cityId, Integer pageNum, Integer pageSize);
 
     /**
      * 查询城市对应的住宿
      * @param cityId
      * @return 城市对应的住宿
      */
-    DormitoryListVO queryCityDormitory(String cityId);
+    DormitoryListVO queryCityDormitory(String cityId, Integer pageNum, Integer pageSize);
 
     /**
      * 查询单个景点信息

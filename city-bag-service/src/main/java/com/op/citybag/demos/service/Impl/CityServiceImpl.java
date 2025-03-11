@@ -2,6 +2,8 @@ package com.op.citybag.demos.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.op.citybag.demos.exception.AppException;
 import com.op.citybag.demos.mapper.CityMapper;
 import com.op.citybag.demos.mapper.DormitoryMapper;
@@ -11,9 +13,11 @@ import com.op.citybag.demos.model.Entity.City;
 import com.op.citybag.demos.model.Entity.Dormitory;
 import com.op.citybag.demos.model.Entity.Food;
 import com.op.citybag.demos.model.Entity.ScenicSpot;
+import com.op.citybag.demos.model.VO.page.cover.CityCoverVO;
 import com.op.citybag.demos.model.VO.page.cover.DormitoryCoverVO;
 import com.op.citybag.demos.model.VO.page.cover.FoodCoverVO;
 import com.op.citybag.demos.model.VO.page.cover.ScenicSpotCoverVO;
+import com.op.citybag.demos.model.VO.page.list.CityListVO;
 import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
 import com.op.citybag.demos.model.VO.page.list.FoodListVO;
 import com.op.citybag.demos.model.VO.page.list.ScenicSpotListVO;
@@ -29,6 +33,7 @@ import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.utils.Entity2VO;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,123 +70,139 @@ public class CityServiceImpl implements ICityService {
     private RedissonService redissonService;
 
     @Override
-    public CityVO querySingleCity(String cityName) {
+    public CityVO querySingleCity(String cityId) {
 
-        // 构建查询条件
+        String cacheKey = RedisKey.CITY_INFO + cityId;
+
+        // 尝试从缓存获取
+        CityVO cityVO = redissonService.getValue(cacheKey);
+        if (cityVO != null) {
+            log.info("从缓存获取住宿信息: {}", cityId);
+            return cityVO;
+        }
+
+        // 查询数据库
         QueryWrapper<City> wrapper = new QueryWrapper<>();
-        wrapper.eq("city_name", cityName);
-
-        // 执行查询
+        wrapper.eq(Common.CITY_ID, cityId);
         City city = cityMapper.selectOne(wrapper);
+
         if (city == null) {
-            log.info("未找到城市: {}", cityName);
+            log.info("未找到城市: {}", cityId);
             throw new AppException(String.valueOf(GlobalServiceStatusCode.CITY_NOT_EXIST.getCode()), GlobalServiceStatusCode.CITY_NOT_EXIST.getMessage());
         }
 
-        // 转换为VO
-        CityVO cityVO = Entity2VO.City2CityVO(city);
+        // 转换VO
+        cityVO = Entity2VO.City2CityVO(city);
+        cityVO.setCityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(),  Common.QUERY_COVER_TIME));
 
-        // 查询城市图片
-        String cityImg = ossDemoService.generatePresignedUrl
-                (city.getImageUrl(), 1000000000);
-        cityVO.setCityImg(cityImg);
-
+        // 写入缓存
+        redissonService.setValue(cacheKey, cityVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
         return cityVO;
     }
 
     @Override
-    public List<CityVO> queryCityLike(String cityName) {
+    public CityListVO queryCityLike(String cityName, Integer pageNum, Integer pageSize) {
 
-        // 构建查询条件
-        QueryWrapper<City> wrapper = new QueryWrapper<>();
-        wrapper.like("city_name", cityName);
-        // 执行查询
-        List<City> cityList = cityMapper.selectList(wrapper);
+        Page<City> page = new Page<>(pageNum, pageSize);
+        IPage<City> cityPage = cityMapper.selectPage(page,
+                new QueryWrapper<City>().like(Common.CITY_NAME, cityName));
 
-        if (cityList.isEmpty()) {
-            log.info("未找到城市: {}", cityName);
-            throw new AppException(String.valueOf(GlobalServiceStatusCode.CITY_NOT_EXIST.getCode()), GlobalServiceStatusCode.CITY_NOT_EXIST.getMessage());
+        List<CityCoverVO> coverList = cityPage.getRecords().stream()
+                .map(city -> CityCoverVO.builder()
+                        .cityId(city.getCityId())
+                        .cityName(city.getCityName())
+                        .cityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(), Common.QUERY_COVER_TIME))
+                        .build())
+                .collect(Collectors.toList());
 
-        }
-
-        // 转换逻辑
-        List<CityVO> cityVOList = cityList.stream().map(city -> {
-            CityVO cityVO = Entity2VO.City2CityVO(city);
-            cityVO.setCityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(), 1000000000));
-            return cityVO;
-        }).collect(Collectors.toList());
-
-        return cityVOList;
+        return CityListVO.builder()
+                .cityList(coverList)
+                .pageNum(pageNum)
+                .pageSize(pageSize)
+                .total(cityPage.getTotal())
+                .build();
     }
 
     @Override
-    public ScenicSpotListVO queryCityScenicSpot(String cityId) {
+    public CityListVO queryCityLike(String cityName) {
+        return queryCityLike(cityName, Common.DEFAULT_PAGE_NUM, Common.DEFAULT_PAGE_SIZE);
+    }
 
-        // 查询景点封面列表
-        List<ScenicSpotCoverVO> coverList = scenicSpotMapper.selectList(
+    @Override
+    public ScenicSpotListVO queryCityScenicSpot(String cityId, Integer pageNum, Integer pageSize) {
+
+        // 构建分页对象
+        Page<ScenicSpot> page = new Page<>(pageNum, pageSize);
+        IPage<ScenicSpot> spotPage = scenicSpotMapper.selectPage(page,
                 new LambdaQueryWrapper<ScenicSpot>()
-                        .eq(ScenicSpot::getCityId, cityId)
-                        .select(
-                                ScenicSpot::getScenicSpotId,
-                                ScenicSpot::getScenicSpotName,
-                                ScenicSpot::getImageUrl
-                        )
-        ).stream().map(spot -> ScenicSpotCoverVO.builder()
-                .scenicSpotId(spot.getScenicSpotId())
-                .scenicSpotName(spot.getScenicSpotName())
-                .scenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(), 1000000000))
-                .build()
-        ).collect(java.util.stream.Collectors.toList());
+                        .eq(ScenicSpot::getCityId, cityId));
+
+        List<ScenicSpotCoverVO> coverList = spotPage.getRecords().stream()
+                .map(spot -> ScenicSpotCoverVO.builder()
+                        .scenicSpotId(spot.getScenicSpotId())
+                        .scenicSpotName(spot.getScenicSpotName())
+                        .scenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME))
+                        .build())
+                .collect(Collectors.toList());
 
         return ScenicSpotListVO.builder()
                 .cityId(cityId)
                 .scenicSpotList(coverList)
+                .pageNum(pageNum)
+                .pageSize(pageSize)
+                .total(spotPage.getTotal())
                 .build();
     }
 
     @Override
-    public FoodListVO queryCityFood(String cityId) {
+    public FoodListVO queryCityFood(String cityId, Integer pageNum, Integer pageSize) {
         // 查询美食封面列表
-        List<FoodCoverVO> coverList = foodMapper.selectList(
+        Page<Food> page = new Page<>(pageNum, pageSize);
+        IPage<Food> foodPage = foodMapper.selectPage(page,
                 new LambdaQueryWrapper<Food>()
                         .eq(Food::getCityId, cityId)
-                        .select(
-                                Food::getFoodId,
-                                Food::getFoodName,
-                                Food::getImageUrl
-                        )
-        ).stream().map(spot -> FoodCoverVO.builder()
-                .foodId(spot.getFoodId())
-                .foodName(spot.getFoodName())
-                .foodImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(), 1000000000))
-                .build()
-        ).collect(java.util.stream.Collectors.toList());
+                        .select(Food::getFoodId, Food::getFoodName, Food::getImageUrl));
+
+        List<FoodCoverVO> coverList = foodPage.getRecords().stream()
+                .map(food -> FoodCoverVO.builder()
+                        .foodId(food.getFoodId())
+                        .foodName(food.getFoodName())
+                        .foodImg(ossDemoService.generatePresignedUrl(food.getImageUrl(),  Common.QUERY_COVER_TIME))
+                        .build())
+                .collect(Collectors.toList());
+
         return FoodListVO.builder()
                 .cityId(cityId)
                 .foodList(coverList)
+                .pageNum(pageNum)
+                .pageSize(pageSize)
+                .total(foodPage.getTotal())
                 .build();
     }
 
     @Override
-    public DormitoryListVO queryCityDormitory(String cityId) {
+    public DormitoryListVO queryCityDormitory(String cityId, Integer pageNum, Integer pageSize) {
         // 查询住宿封面列表
-        List<DormitoryCoverVO> coverList = dormitoryMapper.selectList(
+        Page<Dormitory> page = new Page<>(pageNum, pageSize);
+        IPage<Dormitory> dormPage = dormitoryMapper.selectPage(page,
                 new LambdaQueryWrapper<Dormitory>()
                         .eq(Dormitory::getCityId, cityId)
-                        .select(
-                                Dormitory::getDormitoryId,
-                                Dormitory::getDormitoryName,
-                                Dormitory::getImageUrl
-                        )
-        ).stream().map(spot -> DormitoryCoverVO.builder()
-                .dormitoryId(spot.getDormitoryId())
-                .dormitoryName(spot.getDormitoryName())
-                .dormitoryImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(), 1000000000))
-                .build()
-        ).collect(java.util.stream.Collectors.toList());
+                        .select(Dormitory::getDormitoryId, Dormitory::getDormitoryName, Dormitory::getImageUrl));
+
+        List<DormitoryCoverVO> coverList = dormPage.getRecords().stream()
+                .map(dorm -> DormitoryCoverVO.builder()
+                        .dormitoryId(dorm.getDormitoryId())
+                        .dormitoryName(dorm.getDormitoryName())
+                        .dormitoryImg(ossDemoService.generatePresignedUrl(dorm.getImageUrl(),  Common.QUERY_COVER_TIME))
+                        .build())
+                .collect(Collectors.toList());
+
         return DormitoryListVO.builder()
                 .cityId(cityId)
                 .dormitoryList(coverList)
+                .pageNum(pageNum)
+                .pageSize(pageSize)
+                .total(dormPage.getTotal())
                 .build();
     }
 
@@ -197,7 +218,10 @@ public class CityServiceImpl implements ICityService {
         }
 
         // 查询数据库
-        Dormitory dormitory = dormitoryMapper.selectById(dormitoryId);
+        QueryWrapper<Dormitory> wrapper = new QueryWrapper<>();
+        wrapper.eq(Common.DORMITORY_ID, dormitoryId);
+        Dormitory dormitory = dormitoryMapper.selectOne(wrapper);
+
         if (dormitory == null) {
             log.info("未找到住宿信息: {}", dormitoryId);
             throw new AppException(String.valueOf(GlobalServiceStatusCode.DORMITORY_NOT_EXIST.getCode()), GlobalServiceStatusCode.DORMITORY_NOT_EXIST.getMessage());
@@ -205,7 +229,7 @@ public class CityServiceImpl implements ICityService {
 
         // 转换VO
         dormitoryVO = Entity2VO.Dormitory2DormitoryVO(dormitory);
-        dormitoryVO.setDormitoryImg(ossDemoService.generatePresignedUrl(dormitory.getImageUrl(), 1000000000));
+        dormitoryVO.setDormitoryImg(ossDemoService.generatePresignedUrl(dormitory.getImageUrl(),  Common.QUERY_COVER_TIME));
 
         // 写入缓存
         redissonService.setValue(cacheKey, dormitoryVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
@@ -222,14 +246,18 @@ public class CityServiceImpl implements ICityService {
             return scenicSpotVO;
         }
 
-        ScenicSpot spot = scenicSpotMapper.selectById(scenicSpotId);
+        // 查询数据库
+        QueryWrapper<ScenicSpot> wrapper = new QueryWrapper<>();
+        wrapper.eq(Common.SCENIC_SPOT_ID, scenicSpotId);
+        ScenicSpot spot = scenicSpotMapper.selectOne(wrapper);
+
         if (spot == null) {
             log.info("未找到景点信息: {}", scenicSpotId);
             throw new AppException(String.valueOf(GlobalServiceStatusCode.SCENIC_SPOT_NOT_EXIST.getCode()), GlobalServiceStatusCode.SCENIC_SPOT_NOT_EXIST.getMessage());
         }
 
         scenicSpotVO = Entity2VO.ScenicSpot2ScenicSpotVO(spot);
-        scenicSpotVO.setScenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(), 1000000000));
+        scenicSpotVO.setScenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME));
 
         redissonService.setValue(cacheKey, scenicSpotVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
         return scenicSpotVO;
@@ -245,14 +273,18 @@ public class CityServiceImpl implements ICityService {
             return foodVO;
         }
 
-        Food food = foodMapper.selectById(foodId);
+        // 查询数据库
+        QueryWrapper<Food> wrapper = new QueryWrapper<>();
+        wrapper.eq(Common.FOOD_ID, foodId);
+        Food food = foodMapper.selectOne(wrapper);
+
         if (food == null) {
             log.info("未找到美食信息: {}", foodId);
             throw new AppException(String.valueOf(GlobalServiceStatusCode.FOOD_NOT_EXIST.getCode()), GlobalServiceStatusCode.FOOD_NOT_EXIST.getMessage());
         }
 
         foodVO = Entity2VO.Food2FoodVO(food);
-        foodVO.setFoodImg(ossDemoService.generatePresignedUrl(food.getImageUrl(), 1000000000));
+        foodVO.setFoodImg(ossDemoService.generatePresignedUrl(food.getImageUrl(),  Common.QUERY_COVER_TIME));
 
         redissonService.setValue(cacheKey, foodVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
         return foodVO;

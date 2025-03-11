@@ -1,14 +1,14 @@
 package com.op.citybag.demos.web.controller;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
+import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.op.citybag.demos.model.VO.login.LoginVO;
-import com.op.citybag.demos.service.ILoginService;
 import com.op.citybag.demos.service.INewLoginService;
-import com.op.citybag.demos.web.common.OPResult;
 import com.op.citybag.demos.web.common.DTO.login.ChangePasswordDTO;
 import com.op.citybag.demos.web.common.DTO.login.StuLoginDTO;
 import com.op.citybag.demos.web.common.DTO.login.WxLoginDTO;
 import com.op.citybag.demos.web.common.DTO.user.UserDTO;
+import com.op.citybag.demos.web.common.OPResult;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,11 +47,11 @@ public class LoginController {
      */
     @PostMapping("wxlogin")
     public OPResult wxLogin(@RequestBody WxLoginDTO wxLoginDTO) {
-        try{
+        try {
 
             // 微信登陆获取openid和phoneNumber
-//            WxMaJscode2SessionResult session = wxMaService.getUserService().getSessionInfo(wxLoginDTO.getCode());
-//            String openid = session.getOpenid();
+            WxMaJscode2SessionResult session = wxMaService.getUserService().getSessionInfo(wxLoginDTO.getCode());
+            String openid = session.getOpenid();
 
 //            WxMaPhoneNumberInfo numberInfo = wxMaService.getUserService().getNewPhoneNoInfo(wxLoginDTO.getPhoneCode());
 //            String phoneNumber = numberInfo.getPhoneNumber();
@@ -59,17 +59,17 @@ public class LoginController {
 
 //            String unionId = session.getUnionid(); // 需配置开放平台
 
-            // 测试用
-            String openid = wxLoginDTO.getCode();
+//            // 测试用
+//            String openid = wxLoginDTO.getCode();
 
-            log.info("微信登陆开始,openid:{}",openid);
+            log.info("微信登陆开始,openid:{}", openid);
 
             LoginVO loginVO = loginService.wxLogin(openid);
 
-            log.info("微信登陆成功,openid:{}",openid);
+            log.info("微信登陆成功,openid:{}", openid);
             return OPResult.SUCCESS(loginVO);
-        }catch (Exception e){
-            log.error("微信登陆失败,cuz:{}",e);
+        } catch (Exception e) {
+            log.error("微信登陆失败,cuz:{}", e);
             return OPResult.FAIL(e);
         }
     }
@@ -79,17 +79,17 @@ public class LoginController {
      */
     @PostMapping("stulogin")
     public OPResult stuLogin(@RequestBody StuLoginDTO stuLoginDTO) {
-        try{
+        try {
 
-            log.info("学号登陆开始,stuId:{}",stuLoginDTO.getStuId());
+            log.info("学号登陆开始,stuId:{}", stuLoginDTO.getStuId());
 
             LoginVO loginVO = loginService.stuLogin(stuLoginDTO.getStuId(), stuLoginDTO.getPassword());
 
-            log.info("学号登陆成功,stuId:{}",stuLoginDTO.getStuId());
+            log.info("学号登陆成功,stuId:{}", stuLoginDTO.getStuId());
 
             return OPResult.SUCCESS(loginVO);
-        }catch (Exception e){
-            log.error("学号登陆失败,stuId:{},cuz:{}",stuLoginDTO.getStuId(),e.getMessage());
+        } catch (Exception e) {
+            log.error("学号登陆失败,stuId:{},cuz:{}", stuLoginDTO.getStuId(), e.getMessage());
             return OPResult.FAIL(e);
         }
     }
@@ -100,20 +100,21 @@ public class LoginController {
     @PostMapping("logout")
 //    @LoginVerification
 //    @SelfPermissionVerification
-    public OPResult logout(@RequestBody UserDTO userDTO){
-        try{
-            log.info("退出登陆开始,userId:{}",userDTO.getUserId());
+    public OPResult logout(@RequestBody UserDTO userDTO) {
+        try {
+            log.info("退出登陆开始,userId:{}", userDTO.getUserId());
             loginService.logout(userDTO.getUserId());
-            log.info("退出登陆成功,userId:{}",userDTO.getUserId());
+            log.info("退出登陆成功,userId:{}", userDTO.getUserId());
             return OPResult.SUCCESS();
-        }catch (Exception e){
-            log.error("退出登陆失败,userId:{},cuz:{}",userDTO.getUserId(),e.getMessage());
+        } catch (Exception e) {
+            log.error("退出登陆失败,userId:{},cuz:{}", userDTO.getUserId(), e.getMessage());
             return OPResult.FAIL(e);
         }
     }
 
     /**
      * 更改密码
+     *
      * @param changePasswordDTO
      * @return
      */

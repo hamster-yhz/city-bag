@@ -21,9 +21,9 @@ import javax.validation.constraints.NotBlank;
 public class QuerySingleCityDTO {
 
     /**
-     * 城市名称
+     * 城市id
      */
-    @NotBlank(message = "城市名称不能为空")
-    private String cityName;
+    @NotBlank(message = "城市id不能为空")
+    private String cityId;
 
 }

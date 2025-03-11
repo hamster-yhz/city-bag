@@ -29,6 +29,8 @@ public class LikeController {
 
     /**
      * 对实体进行点赞或者取消点赞
+     * 每个账户每天只能对每个实体进行一次点赞
+     * 0点-0点05分之间进行重置
      * @param likeRequestDTO
      * @return
      */
