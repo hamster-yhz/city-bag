@@ -111,7 +111,7 @@ public class CityServiceImpl implements ICityService {
                 .map(city -> CityCoverVO.builder()
                         .cityId(city.getCityId())
                         .cityName(city.getCityName())
-                        .cityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(), Common.QUERY_COVER_TIME))
+//                        .cityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(), Common.QUERY_COVER_TIME))
                         .build())
                 .collect(Collectors.toList());
 

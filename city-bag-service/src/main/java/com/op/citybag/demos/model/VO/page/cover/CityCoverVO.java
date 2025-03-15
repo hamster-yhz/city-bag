@@ -20,5 +20,5 @@ public class CityCoverVO {
 
     private String cityName;
 
-    private String cityImg;
+    //private String cityImg;
 }
