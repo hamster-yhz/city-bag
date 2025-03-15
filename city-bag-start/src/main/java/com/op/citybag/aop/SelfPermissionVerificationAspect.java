@@ -7,12 +7,14 @@ import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.utils.TokenUtil;
 import com.op.citybag.demos.web.exception.AppException;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.redisson.client.RedisException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -42,7 +44,7 @@ public class SelfPermissionVerificationAspect {
     /**
      * 拦截入口
      */
-    @Pointcut("@annotation(com.op.citybag.demos.web.constraint.LoginVerification)")
+    @Pointcut("@annotation(com.op.citybag.demos.web.constraint.SelfPermissionVerification)")
     public void pointCut() {
     }
 
@@ -60,17 +62,27 @@ public class SelfPermissionVerificationAspect {
         HttpServletRequest request = attributes.getRequest();
         String token = request.getHeader("access_token");
 
-        if (!checkAT(token)) {
-            log.info("accessToken:{}被伪造,是无效token", token);
-            throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getCode()), GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getMessage());
+        String tokenUserId = null;
+
+        try {
+            // 获取token的过期时间
+            String key = RedisKey.ACCESS_TOKEN + token;
+            Long accessTokenExpired = redissonService.getMapExpired(key);
+
+            // 获取用户信息
+            tokenUserId = redissonService.getFromMap(key, Common.USER_ID);
+
+            // token校验
+            String isDeleted = redissonService.getFromMap(key, Common.TABLE_LOGIC);
+
+            if (accessTokenExpired <= EXPIRED || isDeleted == IS_DELETED) {
+                log.info("accessToken已失效,accessToken:{}", token);
+                throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getCode()), GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getMessage());
+            }
+        } catch (RedisException e) {
+            //redis宕机兜底
+            tokenUserId = getUserIdByAT(token);
         }
-
-        // 获取token的过期时间
-        String key = RedisKey.TOKEN + token;
-        Long accessTokenExpired = redissonService.getMapExpired(key);
-
-        // 获取用户信息
-        String tokenUserId = redissonService.getFromMap(key, Common.USER_ID);
 
         // 获取用户ID
         Object arg = joinPoint.getArgs()[0];
@@ -78,14 +90,6 @@ public class SelfPermissionVerificationAspect {
             throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_UNKNOWN_ERROR.getCode()), GlobalServiceStatusCode.LOGIN_UNKNOWN_ERROR.getMessage());
         }
         String targetUserId = (String) arg.getClass().getMethod("getUserId").invoke(arg);
-
-        // token校验
-        String isDeleted = redissonService.getFromMap(key, Common.TABLE_LOGIC);
-
-        if (accessTokenExpired <= EXPIRED || isDeleted == IS_DELETED) {
-            log.info("accessToken已失效,accessToken:{}", token);
-            throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getCode()), GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getMessage());
-        }
 
         // 校验用户ID是否相同
         if (tokenUserId.equals(targetUserId)) {
@@ -98,12 +102,13 @@ public class SelfPermissionVerificationAspect {
 
     }
 
-    private Boolean checkAT(String token) {
-        //用tokenUtil检查token是否合法
+    private String getUserIdByAT(String token) {
         if (TokenUtil.checkAccessToken(token)) {
-            return true;
+            Claims claimsByAccessToken = TokenUtil.getClaimsByAccessToken(token);
+            String userId = (String) claimsByAccessToken.get(TokenUtil.USER_ID);
+            return userId;
         } else {
-            return false;
+            return null;
         }
     }
 }

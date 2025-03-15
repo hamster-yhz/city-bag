@@ -21,7 +21,4 @@ public class TokenVO {
 
     private String userId;
 
-    private String openid;
-
-    private String phone;
 }

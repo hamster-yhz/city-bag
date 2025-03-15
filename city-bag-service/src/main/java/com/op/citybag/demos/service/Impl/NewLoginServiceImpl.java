@@ -6,6 +6,7 @@ import com.op.citybag.demos.exception.AppException;
 import com.op.citybag.demos.mapper.UserMapper;
 import com.op.citybag.demos.model.Entity.User;
 import com.op.citybag.demos.model.VO.login.LoginVO;
+import com.op.citybag.demos.model.VO.login.TokenVO;
 import com.op.citybag.demos.model.common.Common;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.common.RedisKey;
@@ -16,6 +17,7 @@ import com.op.citybag.demos.utils.SnowflakeIdWorker;
 import com.op.citybag.demos.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
+import org.redisson.client.RedisException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,11 +60,16 @@ public class NewLoginServiceImpl implements INewLoginService {
             log.info("用户已存在,userId:{}", user.getUserId());
         }
 
+        //先退出登录 清除token
+        clearToken(user.getUserId());
+
         //生成token
-        String token = createToken(user);
+        String accessToken = createAccessToken(user);
+        String refreshToken = createRefreshToken(user);
 
         LoginVO loginVO = Entity2VO.User2LoginVO(user);
-        loginVO.setAccessToken(token);
+        loginVO.setAccessToken(accessToken);
+        loginVO.setRefreshToken(refreshToken);
 
         return loginVO;
     }
@@ -90,11 +97,16 @@ public class NewLoginServiceImpl implements INewLoginService {
             throw new AppException(String.valueOf(GlobalServiceStatusCode.USER_CREDENTIALS_ERROR.getCode()), GlobalServiceStatusCode.USER_CREDENTIALS_ERROR.getMessage());
         }
 
+        //先退出登录 清除token
+        clearToken(user.getUserId());
+
         //生成token
-        String token = createToken(user);
+        String accessToken = createAccessToken(user);
+        String refreshToken = createRefreshToken(user);
 
         LoginVO loginVO = Entity2VO.User2LoginVO(user);
-        loginVO.setAccessToken(token);
+        loginVO.setAccessToken(accessToken);
+        loginVO.setRefreshToken(refreshToken);
 
         return loginVO;
 
@@ -124,6 +136,48 @@ public class NewLoginServiceImpl implements INewLoginService {
             log.info("密码修改成功,userId: {}", user.getUserId());
         }
 
+    }
+
+    /**
+     * 刷新token
+     */
+    @Override
+    public TokenVO refreshToken(String refreshToken) {
+
+        String tokenUserId = null;
+        String key = RedisKey.REFRESH_TOKEN + refreshToken;
+        // 获取从RT中用户数据
+        try {
+            tokenUserId = redissonService.getFromMap(key, Common.USER_ID);
+        } catch (RedisException e) {
+            //redis宕机兜底
+            tokenUserId = TokenUtil.getClaimsByReflashToken(refreshToken).get(Common.USER_ID).toString();
+        }
+
+        // 查询用户信息
+        //查询用户
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(Common.USER_ID, tokenUserId)
+                .eq(Common.TABLE_LOGIC, Common.NOT_DELETE);
+        User user = userMapper.selectOne(queryWrapper);
+
+        if (user == null) {
+            log.info("用户不存在");
+            throw new AppException(String.valueOf(GlobalServiceStatusCode.USER_ACCOUNT_NOT_EXIST.getCode()), GlobalServiceStatusCode.USER_ACCOUNT_NOT_EXIST.getMessage());
+        }
+
+        // 如果AT的数量达到容忍的极限 清除旧token
+        if (redissonService.getActiveZSetSize(RedisKey.USER_TO_TOKEN + user.getUserId()) > Common.MAX_ACCESS_TOKEN_COUNT) {
+            clearAccessToken(user.getUserId());
+        }
+
+        // 生成token
+        String accessToken = createAccessToken(user);
+
+        return TokenVO.builder()
+                .token(accessToken)
+                .userId(user.getUserId())
+                .build();
     }
 
     @Override
@@ -211,34 +265,74 @@ public class NewLoginServiceImpl implements INewLoginService {
     }
 
     /**
-     * 创建token
+     * 创建access_token
      */
-    private String createToken(User user) {
+    private String createAccessToken(User user) {
 
-        clearToken(user.getUserId());
+        String token = TokenUtil.getAccessToken(user.getUserId());
+        String key = RedisKey.ACCESS_TOKEN + token;
 
-        String token = TokenUtil.getAccessToken(user.getUserId(), user.getPhone());
-        String key = RedisKey.TOKEN + token;
-
+        // 将accesstoken存储到redis中
+        // 过期时间在此设置 暂不抽取到配置里
         redissonService.addToMap(key, Common.TABLE_LOGIC, String.valueOf(Common.NOT_DELETE));
         redissonService.addToMap(key, Common.USER_ID, user.getUserId());
-        redissonService.setMapExpired(key, Common.MONTH);
+        redissonService.setMapExpired(key, Common.MINUTE * 5L);
 
-        redissonService.setValue(RedisKey.USER_TO_TOKEN + user.getUserId(), token);
-        redissonService.setValueExpired(RedisKey.USER_TO_TOKEN + user.getUserId(), Common.MONTH);
+        // 将token与userId关联
+        redissonService.addToZSetWithExpire(RedisKey.USER_TO_TOKEN + user.getUserId(), RedisKey.ACCESS_TOKEN + token, Common.MINUTE * 6L);
 
         return token;
     }
 
     /**
-     * 清除token
+     * 创建refresh_token
      */
-    private void clearToken(String userId) {
-        String token = redissonService.getValue(RedisKey.USER_TO_TOKEN + userId);
-        if (token != null) {
-            redissonService.remove(RedisKey.TOKEN + token);
-        }
-        redissonService.remove(RedisKey.USER_TO_TOKEN + userId);
+    private String createRefreshToken(User user) {
+        String token = TokenUtil.getRefreshToken(user.getUserId());
+        String key = RedisKey.REFRESH_TOKEN + token;
+
+        // 将refreshtoken存储到redis中
+        // 过期时间在此设置 暂不抽取到配置里
+        redissonService.addToMap(key, Common.TABLE_LOGIC, String.valueOf(Common.NOT_DELETE));
+        redissonService.addToMap(key, Common.USER_ID, user.getUserId());
+        redissonService.setMapExpired(key, Common.MONTH);
+
+        // 将token与userId关联
+        redissonService.addToZSetWithExpire(RedisKey.USER_TO_TOKEN + user.getUserId(), RedisKey.REFRESH_TOKEN + token, Common.MONTH + 5 * Common.MINUTE);
+
+        return token;
     }
 
+    /**
+     * 尝试清除token
+     */
+    private void clearToken(String userId) {
+
+        try {
+            redissonService.getActiveZSetMembers(RedisKey.USER_TO_TOKEN + userId).forEach(token -> {
+                redissonService.remove(RedisKey.ACCESS_TOKEN + token);
+                redissonService.remove(RedisKey.REFRESH_TOKEN + token);
+            });
+
+            redissonService.remove(RedisKey.USER_TO_TOKEN + userId);
+        } catch (RedisException e) {
+            //redis宕机
+        }
+    }
+
+    /**
+     * 清除accesstoken
+     */
+    private void clearAccessToken(String userId) {
+
+        try{
+        redissonService.getActiveZSetMembers(RedisKey.USER_TO_TOKEN + userId).forEach(token -> {
+            redissonService.remove(RedisKey.ACCESS_TOKEN + token);
+            // 删除ZSet中的token记录
+            redissonService.removeFromZSet(RedisKey.USER_TO_TOKEN + userId , RedisKey.ACCESS_TOKEN + token);
+        });} catch (RedisException e) {
+            //redis宕机
+        }
+
+    }
 }

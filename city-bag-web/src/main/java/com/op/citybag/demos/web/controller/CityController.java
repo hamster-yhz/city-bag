@@ -11,6 +11,7 @@ import com.op.citybag.demos.model.VO.page.object.ScenicSpotVO;
 import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.web.common.DTO.city.*;
 import com.op.citybag.demos.web.common.OPResult;
+import com.op.citybag.demos.web.constraint.LoginVerification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class CityController {
             //查询城市信息(分页查询)
 //            CityListVO cityListVO = cityService.queryCityLike(queryCityLikeDTO.getCityName(), queryCityLikeDTO.getPageNum(), queryCityLikeDTO.getPageSize());
 
-            //查询城市信息(全部返回)
+            //查询城市信息(默认查询)
             CityListVO cityListVO = cityService.queryCityLike(queryCityLikeDTO.getCityName());
 
             log.info("查询城市信息成功");

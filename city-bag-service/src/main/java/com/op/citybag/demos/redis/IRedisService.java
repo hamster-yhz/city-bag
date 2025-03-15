@@ -357,4 +357,31 @@ public interface IRedisService {
      * @return 返回结果
      */
     <T> T executeLuaScriptBySha(String shaDigest, Collection<String> keys, Object... args);
+
+
+    /**
+     * 添加元素到ZSET并设置过期时间（单位：秒）
+     * @param key ZSET键名
+     * @param member 元素值
+     * @param expireSeconds 过期时间（秒）
+     */
+    void addToZSetWithExpire(String key, String member, long expireSeconds);
+
+    /**
+     * 获取ZSET中未过期的有效元素
+     * @param key ZSET键名
+     * @return 有效元素集合
+     */
+    Set<String> getActiveZSetMembers(String key);
+
+    /**
+     * 移除ZSET中的元素
+     * @param key ZSET键名
+     * @param member 元素值
+     */
+    void removeFromZSet(String key, String member);
+
+    int getZSetSize(String key);
+
+    int getActiveZSetSize(String key);
 }

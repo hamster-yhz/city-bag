@@ -9,33 +9,49 @@ package com.op.citybag.demos.model.common;
 
 public class RedisKey {
 
+    /**
+     * token
+     */
     public static final String TOKEN = "op:city_bag:login:token:";
 
-    public static final String NEW_USER_LOCK = "op:city_bag:new_user_lock:";
+    public static final String ACCESS_TOKEN = "op:city_bag:login:token:access_token:";
 
-    public final static String USER_INFO = "op:city_bag:user:info:";
+    public static final String REFRESH_TOKEN = "op:city_bag:login:token:refresh_token:";
 
-    public final static String USER_TO_TOKEN = "op:city_bag:user_to_token";
+    public final static String USER_TO_TOKEN = "op:city_bag:login:user_to_token";
 
-    public static final String DORMITORY_INFO = "city_bag:dormitory:info:";
+    /**
+     * 缓存
+     */
+    public final static String USER_INFO = "op:city_bag:cache:user_info:";
 
-    public static final String SCENIC_SPOT_INFO = "city_bag:scenic:info:";
+    public static final String DORMITORY_INFO = "city_bag:cache:dormitory_info:";
 
-    public static final String FOOD_INFO = "city_bag:food:info:";
+    public static final String SCENIC_SPOT_INFO = "city_bag:cache:scenic_info:";
 
-    public static final String CITY_INFO = "city_bag:city:info:";
+    public static final String FOOD_INFO = "city_bag:cache:food_info:";
+
+    public static final String CITY_INFO = "city_bag:cache:city_info:";
 
     public static final String CITY_BAG = "city_bag:";
 
-    public static final String INFO = ":info";
+    public static final String CITY_BAG_CACHE = "city_bag:cache:";
 
-    // 存储实体点赞集合
+    public static final String INFO = "_info";
+
+    /**
+     * 点赞
+     */
     public static final String LIKE_SET = "city_bag:like:set:";
 
+    /**
+     * 锁
+     */
     // 分布式锁
     public static final String LIKE_LOCK = "city_bag:like:lock:";
-
     // 用户操作锁
     public static final String LIKE_USER_LOCK = "city_bag:like:user:";
+    // 新用户锁
+    public static final String NEW_USER_LOCK = "op:city_bag:new_user_lock:";
 
 }

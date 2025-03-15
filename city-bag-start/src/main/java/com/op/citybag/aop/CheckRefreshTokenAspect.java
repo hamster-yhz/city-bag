@@ -1,6 +1,5 @@
 package com.op.citybag.aop;
 
-
 import com.op.citybag.demos.model.common.Common;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.common.RedisKey;
@@ -15,29 +14,28 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.redisson.client.RedisException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-
 /**
  * @Author: 严豪哲
- * @Description: 登录验证拦截器
- * @Date: 2024/11/18 10:27
+ * @Description:
+ * @Date: 2024/11/17 15:26
  * @Version: 1.0
  */
 
-@Slf4j
 @Component
+@Slf4j
 @Aspect
-@Order(Integer.MIN_VALUE)
-public class LoginVerificationAspect {
+public class CheckRefreshTokenAspect {
+
 
     private final long EXPIRED = 0;
 
     private final String IS_DELETED = "1";
 
+    private final String REFRESH_TOKEN = "refresh_token";
 
     @Autowired
     private RedissonService redissonService;
@@ -45,13 +43,12 @@ public class LoginVerificationAspect {
     /**
      * 拦截入口
      */
-    @Pointcut("@annotation(com.op.citybag.demos.web.constraint.LoginVerification)")
+    @Pointcut("@annotation(com.op.citybag.demos.web.constraint.CheckRefreshToken)")
     public void pointCut() {
     }
 
     /**
      * 拦截处理
-     *
      * @param joinPoint joinPoint 信息
      * @return result
      * @throws Throwable if any
@@ -60,39 +57,33 @@ public class LoginVerificationAspect {
     public Object checkToken(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        String token = request.getHeader("access_token");
+        String token = request.getHeader(REFRESH_TOKEN);
 
         try {
             // 获取token的过期时间
-            String key = RedisKey.ACCESS_TOKEN + token;
-            Long accessTokenExpired = redissonService.getMapExpired(key);
+            String key = RedisKey.REFRESH_TOKEN + token;
+            Long RefreshTokenExpired = redissonService.getMapExpired(key);
 
             // token校验
             String isDeleted = redissonService.getFromMap(key, Common.TABLE_LOGIC);
 
-            if (accessTokenExpired <= EXPIRED || isDeleted == IS_DELETED) {
-                log.info("accessToken已失效,accessToken:{}", token);
-                throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getCode()), GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getMessage());
+            if (RefreshTokenExpired <= EXPIRED || isDeleted == IS_DELETED) {
+                log.info("refreshToken已失效,refreshToken:{}", token);
+                throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_REFRESH_TOKEN_INVALID.getCode()), GlobalServiceStatusCode.LOGIN_REFRESH_TOKEN_INVALID.getMessage());
             }
         } catch (RedisException e) {
             //redis宕机兜底
-            if (!checkAT(token)) {
-                log.info("accessToken已失效,accessToken:{}", token);
-                throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getCode()), GlobalServiceStatusCode.LOGIN_ACCESS_TOKEN_INVALID.getMessage());
+            if (!checkRT(token)) {
+                log.info("refreshToken已失效,refreshToken:{}", token);
+                throw new AppException(String.valueOf(GlobalServiceStatusCode.LOGIN_REFRESH_TOKEN_INVALID.getCode()), GlobalServiceStatusCode.LOGIN_REFRESH_TOKEN_INVALID.getMessage());
             }
         }
+
         //执行目标接口
         return joinPoint.proceed();
     }
 
-    private Boolean checkAT(String token) {
-
-        //用tokenUtil检查token是否合法
-        if (TokenUtil.checkAccessToken(token)) {
-            return true;
-        } else {
-            return false;
-        }
+    private Boolean checkRT(String token) {
+        return true;
     }
-
 }

@@ -287,8 +287,8 @@ public class LoginServiceImpl implements ILoginService {
 
         clearToken(user.getUserId());
 
-        String token = TokenUtil.getAccessToken(user.getUserId(), user.getPhone());
-        String key = RedisKey.TOKEN + token;
+        String token = TokenUtil.getAccessToken(user.getUserId());
+        String key = RedisKey.ACCESS_TOKEN + token;
 
         redissonService.addToMap(key, Common.TABLE_LOGIC, String.valueOf(Common.NOT_DELETE));
         redissonService.addToMap(key, Common.USER_ID, user.getUserId());
@@ -306,7 +306,7 @@ public class LoginServiceImpl implements ILoginService {
     private void clearToken(String userId) {
         String token = redissonService.getValue(RedisKey.USER_TO_TOKEN + userId);
         if (token != null) {
-            redissonService.remove(RedisKey.TOKEN + token);
+            redissonService.remove(RedisKey.ACCESS_TOKEN + token);
         }
         redissonService.remove(RedisKey.USER_TO_TOKEN + userId);
     }

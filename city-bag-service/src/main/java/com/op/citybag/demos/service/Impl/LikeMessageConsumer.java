@@ -103,7 +103,7 @@ public class LikeMessageConsumer {
 
                 if (mapper.update(entity, wrapper) > 0) {
                     // 更新成功清除本地缓存 Redis+DB双写
-                    String key = RedisKey.CITY_BAG + entityType + RedisKey.INFO + id;
+                    String key = RedisKey.CITY_BAG_CACHE + entityType + RedisKey.INFO + id;
                     redissionService.remove(key);
                     return;
                 }

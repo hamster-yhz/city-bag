@@ -1,6 +1,7 @@
 package com.op.citybag.demos.service;
 
 import com.op.citybag.demos.model.VO.login.LoginVO;
+import com.op.citybag.demos.model.VO.login.TokenVO;
 
 public interface INewLoginService {
     /**
@@ -31,4 +32,11 @@ public interface INewLoginService {
      * @return
      */
     void logout(String userId);
+
+    /**
+     * 刷新token
+     * @param refreshToken
+     * @return
+     */
+    TokenVO refreshToken(String refreshToken);
 }

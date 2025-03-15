@@ -29,6 +29,8 @@ public class LoginVO {
      */
     private String accessToken;
 
+    private String refreshToken;
+
     /**
      * 用户id
      */

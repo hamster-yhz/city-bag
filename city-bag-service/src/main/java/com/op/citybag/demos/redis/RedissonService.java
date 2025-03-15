@@ -249,4 +249,67 @@ public class RedissonService implements IRedisService {
                 args
         );
     }
+
+    @Override
+    public void addToZSetWithExpire(String key, String member, long expireSeconds) {
+        // 使用当前时间戳 + 过期时间作为分数
+        double score = System.currentTimeMillis() + expireSeconds;
+        redissonClient.getScoredSortedSet(key).add(score, member);
+    }
+
+    @Override
+    public Set<String> getActiveZSetMembers(String key) {
+
+        Integer current = (int) System.currentTimeMillis();
+
+        // 使用Lua脚本进行清理 独立的分布式锁
+        RReadWriteLock lock = redissonClient.getReadWriteLock(key + ":lock");
+        try {
+            if (lock.writeLock().tryLock(3, TimeUnit.SECONDS)) {
+                String luaScript =
+                        "local current = tonumber(ARGV[1])\n" +
+                                "redis.call('ZREMRANGEBYSCORE', KEYS[1], 0, current)\n" +
+                                "return redis.call('ZRANGEBYSCORE', KEYS[1], current + 1, '+inf')";  // 移除tostring转换
+
+                Object result = redissonClient.getScript().eval(
+                        RScript.Mode.READ_WRITE,
+                        luaScript,
+                        RScript.ReturnType.MULTI,
+                        Collections.singletonList(key),
+                        current
+                );
+
+                // 增强类型安全转换
+                if (result instanceof List) {
+                    List<String> listResult = (List<String>) result;
+                    return new HashSet<>(listResult);
+                }
+                return Collections.emptySet();
+            }
+            return Collections.emptySet();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return Collections.emptySet();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void removeFromZSet(String key, String member) {
+        RScoredSortedSet<String> zset = redissonClient.getScoredSortedSet(key);
+        zset.remove(member);
+    }
+
+    @Override
+    public int getZSetSize(String key) {
+        return redissonClient.getScoredSortedSet(key).size();
+    }
+
+    @Override
+    public int getActiveZSetSize(String key) {
+        return getActiveZSetMembers(key).size(); // 复用现有清理逻辑
+    }
+
+
 }

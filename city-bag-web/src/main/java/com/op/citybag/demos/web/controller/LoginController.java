@@ -3,13 +3,17 @@ package com.op.citybag.demos.web.controller;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.op.citybag.demos.model.VO.login.LoginVO;
+import com.op.citybag.demos.model.VO.login.TokenVO;
 import com.op.citybag.demos.service.INewLoginService;
 import com.op.citybag.demos.web.common.DTO.login.ChangePasswordDTO;
+import com.op.citybag.demos.web.common.DTO.login.RefreshDTO;
 import com.op.citybag.demos.web.common.DTO.login.StuLoginDTO;
 import com.op.citybag.demos.web.common.DTO.login.WxLoginDTO;
 import com.op.citybag.demos.web.common.DTO.user.UserDTO;
 import com.op.citybag.demos.web.common.OPResult;
+import com.op.citybag.demos.web.constraint.CheckRefreshToken;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +36,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class LoginController {
 
-
     @Autowired
     private final INewLoginService loginService;
 
@@ -44,14 +47,16 @@ public class LoginController {
 
     /**
      * 微信登陆
+     *  @param wxLoginDTO
+     *  @return
      */
     @PostMapping("wxlogin")
     public OPResult wxLogin(@RequestBody WxLoginDTO wxLoginDTO) {
         try {
 
-            // 微信登陆获取openid和phoneNumber
-            WxMaJscode2SessionResult session = wxMaService.getUserService().getSessionInfo(wxLoginDTO.getCode());
-            String openid = session.getOpenid();
+//            // 微信登陆获取openid和phoneNumber
+//            WxMaJscode2SessionResult session = wxMaService.getUserService().getSessionInfo(wxLoginDTO.getCode());
+//            String openid = session.getOpenid();
 
 //            WxMaPhoneNumberInfo numberInfo = wxMaService.getUserService().getNewPhoneNoInfo(wxLoginDTO.getPhoneCode());
 //            String phoneNumber = numberInfo.getPhoneNumber();
@@ -60,7 +65,7 @@ public class LoginController {
 //            String unionId = session.getUnionid(); // 需配置开放平台
 
 //            // 测试用
-//            String openid = wxLoginDTO.getCode();
+          String openid = wxLoginDTO.getCode();
 
             log.info("微信登陆开始,openid:{}", openid);
 
@@ -76,6 +81,7 @@ public class LoginController {
 
     /**
      * 学号登陆
+     * @param stuLoginDTO
      */
     @PostMapping("stulogin")
     public OPResult stuLogin(@RequestBody StuLoginDTO stuLoginDTO) {
@@ -90,6 +96,29 @@ public class LoginController {
             return OPResult.SUCCESS(loginVO);
         } catch (Exception e) {
             log.error("学号登陆失败,stuId:{},cuz:{}", stuLoginDTO.getStuId(), e.getMessage());
+            return OPResult.FAIL(e);
+        }
+    }
+    
+    /**
+     * 刷新token (无感刷新)
+     *
+     */
+    @CheckRefreshToken
+    @PostMapping(value = "refresh")
+    public OPResult refresh(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            // 从请求头中获取refreshToken
+            String refrashToken = request.getHeader(RefreshDTO.REFRESH_TOKEN);
+
+            log.info("正在访问无感刷新接口,reflashToken:{}", refrashToken);
+
+            TokenVO tokenVO = loginService.refreshToken(refrashToken);
+
+            return OPResult.SUCCESS(tokenVO);
+
+        } catch (Exception e) {
+            log.info("访问无感刷新接口失败,reflashToken:{}", request.getHeader(RefreshDTO.REFRESH_TOKEN));
             return OPResult.FAIL(e);
         }
     }

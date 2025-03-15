@@ -9,6 +9,9 @@ package com.op.citybag.demos.model.common;
 
 public class Common {
 
+    /**
+     * 数据库字段
+     */
     public static final String OPENID = "openid";
 
     public static final String PASSWORD = "password";
@@ -43,6 +46,16 @@ public class Common {
 
     public static final Integer STU_USER = 2;
 
+    /**
+     * token名称
+     */
+    public static final String ACCESS_TOKEN = "access_token";
+
+    public static final String REFRESH_TOKEN = "refresh_token";
+
+    /**
+     * 锁的时间
+     */
     public static final long TRY_LOCK_TIME = 5;
 
 
@@ -53,11 +66,18 @@ public class Common {
 
     public static final Integer DEFAULT_PAGE_SIZE = 50;
 
+    // AT数量限制 (实际数量为该数值减一 因为其中有一个RT)
+    public static final Integer MAX_ACCESS_TOKEN_COUNT = 21;
+
 
     /**
      * 过期时间 秒
      */
+    public static final Long MINUTE = 60 * 1000L;
+
     public static final Long MONTH = 30L * 24 * 60 * 60 * 1000L; // 一个月的豪秒数
+
+    public static final Long DAY = 24 * 60 * 60 * 1000L; // 一天的豪秒数
 
     public static final Long REDIS_EXPIRE_TIME_10_MINUTES = 10 * 60 * 1000L;
 
