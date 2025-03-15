@@ -33,6 +33,24 @@ public class ScenicSpot {
     @TableField("image_url")
     private String imageUrl;
 
+    @TableField("open_time")
+    private String openTime;
+
+    @TableField("price")
+    private String price;
+
+    @TableField("address")
+    private String address;
+
+    @TableField("phone")
+    private String phone;
+
+    @TableField("visit_time")
+    private String visitTime;
+
+    @TableField("scenic_spot_list")
+    private String scenicSpotList;
+
     @TableField("type")
     private Integer type;
 

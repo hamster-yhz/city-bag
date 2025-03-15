@@ -20,6 +20,10 @@ public class ScenicSpotCoverVO {
 
     private String scenicSpotName;
 
+    private String visitTime;
+
+    private String address;
+
     private String scenicSpotImg;
 
 }

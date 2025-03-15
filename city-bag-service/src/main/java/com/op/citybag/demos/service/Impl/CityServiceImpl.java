@@ -142,6 +142,8 @@ public class CityServiceImpl implements ICityService {
                         .scenicSpotId(spot.getScenicSpotId())
                         .scenicSpotName(spot.getScenicSpotName())
                         .scenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME))
+                        .visitTime(spot.getVisitTime())
+                        .address(spot.getAddress())
                         .build())
                 .collect(Collectors.toList());
 
