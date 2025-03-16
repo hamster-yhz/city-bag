@@ -55,6 +55,10 @@ public enum GlobalServiceStatusCode {
     CITY_HAS_NO_SPOT(3005, "城市暂无景点"),
     ENTITY_NOT_EXIST(3006, "实体不存在"),
     OSS_ERROR(3002, "OSS异常"),
+    ALREADY_COLLECTED(3003, "已收藏该内容"),
+    ALREADY_LIKED(3004, "已点赞"),
+    ALREADY_FOLLOWED(3005, "已关注"),
+    ALREADY_FOLLOWED_OTHER(3006, "已被关注"),
 
     /* 登录模块错误 6001-7000*/
     LOGIN_CODE_EXIT(6001, "需要等待一段时间后才能再次尝试"),

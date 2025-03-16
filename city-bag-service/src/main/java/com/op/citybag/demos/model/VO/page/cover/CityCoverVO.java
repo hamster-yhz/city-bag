@@ -14,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class CityCoverVO {
+public class CityCoverVO{
 
     private String cityId;
 

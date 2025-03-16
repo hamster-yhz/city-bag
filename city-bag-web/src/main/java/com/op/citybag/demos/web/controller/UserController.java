@@ -1,12 +1,18 @@
 package com.op.citybag.demos.web.controller;
 
 import com.op.citybag.demos.model.Entity.User;
+import com.op.citybag.demos.model.VO.user.CollectionListVO;
+import com.op.citybag.demos.model.VO.user.CollectionVO;
 import com.op.citybag.demos.model.VO.user.UserVO;
 import com.op.citybag.demos.service.IUserService;
+import com.op.citybag.demos.web.common.DTO.user.CollectionDTO;
+import com.op.citybag.demos.web.common.DTO.user.CollectionQueryDTO;
 import com.op.citybag.demos.web.common.OPResult;
 import com.op.citybag.demos.web.common.DTO.user.UserDTO;
+import com.op.citybag.demos.web.constraint.LoginVerification;
+import com.op.citybag.demos.web.constraint.SelfPermissionVerification;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -73,5 +79,65 @@ public class UserController {
             return OPResult.FAIL(e);
         }
     }
+
+    /**
+     * 收藏
+     * @param collectionDTO
+     * @return
+     */
+//    @SelfPermissionVerification
+//    @LoginVerification
+    @PostMapping("collect")
+    public OPResult addCollection(@RequestBody CollectionDTO collectionDTO) {
+        try {
+            userService.addCollection(collectionDTO.getUserId(),
+                    collectionDTO.getEntityType(), collectionDTO.getEntityId());
+            return OPResult.SUCCESS();
+        } catch (Exception e) {
+            log.error("收藏失败 userId:{}", collectionDTO.getUserId(), e);
+            return OPResult.FAIL(e);
+        }
+    }
+
+    /**
+     * 取消收藏
+     * @param collectionDTO
+     * @return
+     */
+    //    @SelfPermissionVerification
+//    @LoginVerification
+    @PostMapping("uncollect")
+    public OPResult removeCollection(@RequestBody CollectionDTO collectionDTO) {
+        try {
+            userService.removeCollection(collectionDTO.getUserId(),
+                    collectionDTO.getEntityType(), collectionDTO.getEntityId());
+            return OPResult.SUCCESS();
+        } catch (Exception e) {
+            log.error("取消收藏失败 userId:{}", collectionDTO.getUserId(), e);
+            return OPResult.FAIL(e);
+        }
+    }
+
+    /**
+     * 获取收藏列表
+     * @param collectionQueryDTO
+     * @return
+     */
+    //    @SelfPermissionVerification
+//    @LoginVerification
+    @PostMapping("collections")
+    public OPResult getCollections(@RequestBody CollectionQueryDTO collectionQueryDTO) {
+        try {
+            log.info("获取收藏列表开始 userId:{}", collectionQueryDTO.getUserId());
+
+            CollectionListVO collections = userService.getCollections(collectionQueryDTO.getUserId(), collectionQueryDTO.getEntityType(), collectionQueryDTO.getPageNum(), collectionQueryDTO.getPageSize());
+            return OPResult.SUCCESS(collections);
+
+        } catch (Exception e) {
+            log.error("获取收藏列表失败 userId:{}", collectionQueryDTO.getUserId(), e);
+            return OPResult.FAIL(e);
+        }
+    }
+
 
 }

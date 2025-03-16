@@ -1,5 +1,6 @@
 package com.op.citybag.demos.model.VO.page.object;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.*;
 
 /**
@@ -21,6 +22,18 @@ public class ScenicSpotVO {
     private String scenicSpotName;
 
     private String introduce;
+
+    private String openTime;
+
+    private String price;
+
+    private String address;
+
+    private String phone;
+
+    private String visitTime;
+
+    private String scenicSpotList;
 
     private String scenicSpotImg;
 

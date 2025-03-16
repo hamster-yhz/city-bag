@@ -49,6 +49,7 @@ public class RedisKey {
      */
     // 分布式锁
     public static final String LIKE_LOCK = "city_bag:like:lock:";
+    public static final String COLLECTION_LOCK_PREFIX = "city_bag:collection:lock:";
     // 用户操作锁
     public static final String LIKE_USER_LOCK = "city_bag:like:user:";
     // 新用户锁

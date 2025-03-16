@@ -24,6 +24,14 @@ public class Common {
 
     public static final String USER_NAME = "user_name";
 
+    public static final String CITY = "city";
+
+    public static final String DORMITORY = "dormitory";
+
+    public static final String SCENIC_SPOT = "scenic_spot";
+
+    public static final String FOOD = "food";
+
     public static final String CITY_ID = "city_id";
 
     public static final String CITY_NAME = "city_name";
