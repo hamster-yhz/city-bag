@@ -1,5 +1,6 @@
 package com.op.citybag.demos.web.controller;
 
+import com.op.citybag.demos.utils.SnowflakeIdWorker;
 import com.op.citybag.demos.web.common.OPResult;
 import com.op.citybag.demos.web.common.DTO.AI.AIDTO;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,9 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.io.IOException;
 
 
 /**
@@ -42,7 +46,7 @@ public class AIController {
     public OPResult chat(@RequestBody AIDTO AIDTO) {
         try {
             String answer = chatClient.prompt()
-                    .user(AIDTO.getInput())
+                    .user(AIDTO.getInput()+ " 请用200字内的简洁回答")
                     .call()
                     .content();
             return OPResult.SUCCESS(answer);
@@ -51,6 +55,37 @@ public class AIController {
             return OPResult.FAIL(e);
         }
 
+    }
+
+    /**
+     * AI聊天(流式)
+     * @param AIDTO
+     * @return
+     */
+    @PostMapping("streamChat")
+    public SseEmitter streamChat(@RequestBody AIDTO AIDTO) {
+
+        SseEmitter emitter = new SseEmitter(30_000L); // 30秒超时
+
+        chatClient.prompt()
+                .user(u -> u.text(AIDTO.getInput() + " 请用200字内的简洁回答"))
+                .stream()
+                .content()
+                .subscribe(
+                        content -> {
+                            try {
+                                emitter.send(SseEmitter.event()
+                                        .data(content)
+                                        .id(SnowflakeIdWorker.nextIdStr()));
+                            } catch (IOException e) {
+                                throw new RuntimeException("SSE发送失败", e);
+                            }
+                        },
+                        emitter::completeWithError,
+                        emitter::complete
+                );
+
+        return emitter;
     }
 
 }
