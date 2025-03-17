@@ -12,6 +12,7 @@ import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.utils.SnowflakeIdWorker;
 import com.op.citybag.demos.web.common.DTO.AI.AIDTO;
 import com.op.citybag.demos.web.common.OPResult;
+import com.op.citybag.demos.web.common.OPResultStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -93,6 +94,7 @@ public class AIController {
                 .subscribe(
                         content -> {
                             try {
+                                OPResultStream.sendStreamData(emitter, content);
                                 emitter.send(SseEmitter.event()
                                         .data(content)
                                         .id(SnowflakeIdWorker.nextIdStr()));

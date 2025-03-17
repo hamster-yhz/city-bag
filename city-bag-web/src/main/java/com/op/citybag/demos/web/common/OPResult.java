@@ -3,6 +3,7 @@ package com.op.citybag.demos.web.common;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * @Author: 严豪哲
@@ -19,6 +20,8 @@ public class OPResult {
     private String code;
     private String msg;
     private Object data;
+
+
 
     public static OPResult SUCCESS() {
         return OPResult.builder()
@@ -56,6 +59,5 @@ public class OPResult {
              .msg(msg)
              .build();
     }
-
 
 }
