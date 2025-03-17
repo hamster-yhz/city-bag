@@ -20,6 +20,11 @@ import javax.validation.constraints.NotBlank;
 public class QuerySingleScenicSpotDTO {
 
     /**
+     * 用户ID(可以为空)
+     */
+    private String userId;
+
+    /**
      * 景点ID
      */
     @NotBlank(message = "景点ID不能为空")

@@ -9,12 +9,7 @@ import org.springframework.validation.annotation.Validated;
  * @Date: 2025/3/12 21:01
  * @Version: 1.0
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Validated
+
 public class RefreshDTO {
 
     public static final String REFRESH_TOKEN = "refresh_token";

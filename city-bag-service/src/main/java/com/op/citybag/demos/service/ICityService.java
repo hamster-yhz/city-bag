@@ -62,20 +62,20 @@ public interface ICityService {
      * @param scenicSpotId
      * @return 景点信息
      */
-    ScenicSpotVO querySingleScenicSpot(String scenicSpotId);
+    ScenicSpotVO querySingleScenicSpot(String scenicSpotId, String userId);
 
     /**
      * 查询单个美食信息
      * @param foodId
      * @return 美食信息
      */
-    FoodVO querySingleFood(String foodId);
+    FoodVO querySingleFood(String foodId, String userId);
 
     /**
      * 查询单个住宿信息
      * @param dormitoryId
      * @return 住宿信息
      */
-    DormitoryVO querySingleDormitory(String dormitoryId);
+    DormitoryVO querySingleDormitory(String dormitoryId, String userId);
 
 }

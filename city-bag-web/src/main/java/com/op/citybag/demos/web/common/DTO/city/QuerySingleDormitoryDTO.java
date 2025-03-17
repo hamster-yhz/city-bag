@@ -20,6 +20,11 @@ import javax.validation.constraints.NotBlank;
 public class QuerySingleDormitoryDTO {
 
     /**
+     * 用户ID(可以为空)
+     */
+    private String userId;
+
+    /**
      * 宿舍id
      */
     @NotBlank(message = "宿舍id不能为空")

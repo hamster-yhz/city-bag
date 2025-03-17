@@ -152,6 +152,16 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public Boolean queryCollection(String userId, String entityType, String entityId) {
+        // 检查是否已收藏
+        return userCollectionMapper.exists(new LambdaQueryWrapper<UserCollection>()
+                .eq(UserCollection::getUserId, userId)
+                .eq(UserCollection::getEntityType, entityType)
+                .eq(UserCollection::getEntityId, entityId)
+                .eq(UserCollection::getIsDeleted, 0));
+    }
+
+    @Override
     public void removeCollection(String userId, String entityType, String entityId) {
 
         log.info("正在取消收藏,userId: {},entityType: {},entityId: {}", userId, entityType, entityId);

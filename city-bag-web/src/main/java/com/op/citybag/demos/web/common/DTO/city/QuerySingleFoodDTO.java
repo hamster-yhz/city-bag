@@ -20,6 +20,11 @@ import javax.validation.constraints.NotBlank;
 public class QuerySingleFoodDTO {
 
     /**
+     * 用户ID(可以为空)
+     */
+    private String userId;
+
+    /**
      * 食物ID
      */
     @NotBlank(message = "食物ID不能为空")

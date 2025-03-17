@@ -53,6 +53,7 @@ public class LoginVO {
 
     /**
      * 用户性别
+     *
      */
     private Integer gender;
 

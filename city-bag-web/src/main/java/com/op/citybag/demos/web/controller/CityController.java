@@ -151,14 +151,14 @@ public class CityController {
     /**
      * 查询单个景点信息
      *
-     * @param querySingleScenicSpotDTOsingleScenicSpotDTO
+     * @param querySingleScenicSpotDTO
      * @return
      **/
     @PostMapping("/querysinglescenicspot")
-    public OPResult querySingleScenicSpot(@RequestBody QuerySingleScenicSpotDTO querySingleScenicSpotDTOsingleScenicSpotDTO) {
+    public OPResult querySingleScenicSpot(@RequestBody QuerySingleScenicSpotDTO querySingleScenicSpotDTO) {
         try {
             log.info("查询单个景点信息开始");
-            ScenicSpotVO scenicSpotVO = cityService.querySingleScenicSpot(querySingleScenicSpotDTOsingleScenicSpotDTO.getScenicSpotId());
+            ScenicSpotVO scenicSpotVO = cityService.querySingleScenicSpot(querySingleScenicSpotDTO.getScenicSpotId(), querySingleScenicSpotDTO.getUserId());
             log.info("查询单个景点信息成功");
             return OPResult.SUCCESS(scenicSpotVO);
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class CityController {
     public OPResult querySingleFood(@RequestBody QuerySingleFoodDTO querySingleFoodDTO) {
         try {
             log.info("查询单个美食信息开始");
-            FoodVO foodVO = cityService.querySingleFood(querySingleFoodDTO.getFoodId());
+            FoodVO foodVO = cityService.querySingleFood(querySingleFoodDTO.getFoodId(), querySingleFoodDTO.getUserId());
             log.info("查询单个美食信息成功");
             return OPResult.SUCCESS(foodVO);
         } catch (Exception e) {
@@ -196,7 +196,7 @@ public class CityController {
     public OPResult querySingleDormitory(@RequestBody QuerySingleDormitoryDTO querySingleDormitoryDTO) {
         try {
             log.info("查询单个住宿信息开始");
-            DormitoryVO dormitoryVO = cityService.querySingleDormitory(querySingleDormitoryDTO.getDormitoryId());
+            DormitoryVO dormitoryVO = cityService.querySingleDormitory(querySingleDormitoryDTO.getDormitoryId(), querySingleDormitoryDTO.getUserId());
             log.info("查询单个住宿信息成功");
             return OPResult.SUCCESS(dormitoryVO);
         } catch (Exception e) {

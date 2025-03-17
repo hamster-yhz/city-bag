@@ -51,6 +51,12 @@ public class ScenicSpot {
     @TableField("scenic_spot_list")
     private String scenicSpotList;
 
+    @TableField("photo_url")
+    private String photoUrl;
+
+    @TableField("tag_list")
+    private String tagList;
+
     @TableField("type")
     private Integer type;
 

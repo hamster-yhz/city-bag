@@ -5,14 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.op.citybag.demos.exception.AppException;
-import com.op.citybag.demos.mapper.CityMapper;
-import com.op.citybag.demos.mapper.DormitoryMapper;
-import com.op.citybag.demos.mapper.FoodMapper;
-import com.op.citybag.demos.mapper.ScenicSpotMapper;
-import com.op.citybag.demos.model.Entity.City;
-import com.op.citybag.demos.model.Entity.Dormitory;
-import com.op.citybag.demos.model.Entity.Food;
-import com.op.citybag.demos.model.Entity.ScenicSpot;
+import com.op.citybag.demos.mapper.*;
+import com.op.citybag.demos.model.Entity.*;
 import com.op.citybag.demos.model.VO.page.cover.CityCoverVO;
 import com.op.citybag.demos.model.VO.page.cover.DormitoryCoverVO;
 import com.op.citybag.demos.model.VO.page.cover.FoodCoverVO;
@@ -32,12 +26,14 @@ import com.op.citybag.demos.oss.OSSServiceImpl;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.utils.Entity2VO;
+import com.op.citybag.demos.utils.SplitUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -68,6 +64,9 @@ public class CityServiceImpl implements ICityService {
 
     @Autowired
     private RedissonService redissonService;
+
+    @Autowired
+    private UserCollectionMapper userCollectionMapper;
 
     @Override
     public CityVO querySingleCity(String cityId) {
@@ -209,7 +208,7 @@ public class CityServiceImpl implements ICityService {
     }
 
     @Override
-    public DormitoryVO querySingleDormitory(String dormitoryId) {
+    public DormitoryVO querySingleDormitory(String dormitoryId, String userId) {
         String cacheKey = RedisKey.DORMITORY_INFO + dormitoryId;
 
         // 尝试从缓存获取
@@ -233,13 +232,16 @@ public class CityServiceImpl implements ICityService {
         dormitoryVO = Entity2VO.Dormitory2DormitoryVO(dormitory);
         dormitoryVO.setDormitoryImg(ossDemoService.generatePresignedUrl(dormitory.getImageUrl(),  Common.QUERY_COVER_TIME));
 
+        dormitoryVO.setTagCount(dormitoryVO.getTagList().size());
+        dormitoryVO.setIsCollect(queryCollection(userId, Common.DORMITORY, dormitoryId));
+
         // 写入缓存
         redissonService.setValue(cacheKey, dormitoryVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
         return dormitoryVO;
     }
 
     @Override
-    public ScenicSpotVO querySingleScenicSpot(String scenicSpotId) {
+    public ScenicSpotVO querySingleScenicSpot(String scenicSpotId, String userId) {
         String cacheKey = RedisKey.SCENIC_SPOT_INFO + scenicSpotId;
 
         ScenicSpotVO scenicSpotVO = redissonService.getValue(cacheKey);
@@ -261,12 +263,23 @@ public class CityServiceImpl implements ICityService {
         scenicSpotVO = Entity2VO.ScenicSpot2ScenicSpotVO(spot);
         scenicSpotVO.setScenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME));
 
+        List<String> photoUrls = SplitUtil.splitBySlash(spot.getPhotoUrl()).stream()
+                .map(url -> ossDemoService.generatePresignedUrl(url, Common.QUERY_COVER_TIME))
+                .toList();
+
+        scenicSpotVO.setPhotoUrl(photoUrls);
+        scenicSpotVO.setPhotoCount(photoUrls.size());
+        scenicSpotVO.setTagCount(scenicSpotVO.getTagList().size());
+        scenicSpotVO.setIsCollect(queryCollection(userId, Common.SCENIC_SPOT, scenicSpotId));
+
+        // 写入缓存
         redissonService.setValue(cacheKey, scenicSpotVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
+
         return scenicSpotVO;
     }
 
     @Override
-    public FoodVO querySingleFood(String foodId) {
+    public FoodVO querySingleFood(String foodId, String userId) {
         String cacheKey = RedisKey.FOOD_INFO + foodId;
 
         FoodVO foodVO = redissonService.getValue(cacheKey);
@@ -289,6 +302,23 @@ public class CityServiceImpl implements ICityService {
         foodVO.setFoodImg(ossDemoService.generatePresignedUrl(food.getImageUrl(),  Common.QUERY_COVER_TIME));
 
         redissonService.setValue(cacheKey, foodVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
+
+        foodVO.setTagCount(foodVO.getTagList().size());
+        foodVO.setIsCollect(queryCollection(userId, Common.FOOD, foodId));
+
         return foodVO;
+    }
+
+    private Integer queryCollection(String userId, String entityType, String entityId) {
+        // 检查是否已收藏
+        if(userCollectionMapper.exists(new LambdaQueryWrapper<UserCollection>()
+                .eq(UserCollection::getUserId, userId)
+                .eq(UserCollection::getEntityType, entityType)
+                .eq(UserCollection::getEntityId, entityId)
+                .eq(UserCollection::getIsDeleted, 0))){
+            return 1;
+        }else{
+            return 0;
+        }
     }
 }

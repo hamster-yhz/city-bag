@@ -33,6 +33,15 @@ public class Dormitory {
     @TableField("image_url")
     private String imageUrl;
 
+    @TableField("price")
+    private String price;
+
+    @TableField("phone")
+    private String phone;
+
+    @TableField("tag_list")
+    private String tagList;
+
     @TableField("type")
     private Integer type;
 

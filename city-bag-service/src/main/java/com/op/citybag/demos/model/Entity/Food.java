@@ -33,6 +33,21 @@ public class Food {
     @TableField("image_url")
     private String imageUrl;
 
+    @TableField("open_time")
+    private String openTime;
+
+    @TableField("price")
+    private String price;
+
+    @TableField("phone")
+    private String phone;
+
+    @TableField("food_list")
+    private String foodList;
+
+    @TableField("tag_list")
+    private String tagList;
+
     @Version
     private Integer version;
 

@@ -34,6 +34,16 @@ public interface IUserService {
     void addCollection(String userId, String entityType, String entityId);
 
     /**
+     * 查询是否收藏
+     *
+     * @param userId
+     * @param entityType
+     * @param entityId
+     * @return
+     */
+    Boolean queryCollection(String userId, String entityType, String entityId);
+
+    /**
      * 移除收藏
      *
      * @param userId

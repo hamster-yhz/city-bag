@@ -3,6 +3,8 @@ package com.op.citybag.demos.model.VO.page.object;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.*;
 
+import java.util.List;
+
 /**
  * @Author: 原神
  * @Description:
@@ -34,6 +36,16 @@ public class ScenicSpotVO {
     private String visitTime;
 
     private String scenicSpotList;
+
+    private List<String> photoUrl;
+
+    private List<String> tagList;
+
+    private Integer photoCount;
+
+    private Integer tagCount;
+
+    private Integer IsCollect;
 
     private String scenicSpotImg;
 
