@@ -25,22 +25,11 @@ replay_pid*
 
 
 #add
-# 忽略编译生成的文件和目录
-*.class
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
 # 忽略 IDE 相关的文件和目录
 .idea/
 .vscode/
 *.iml
 
-# 忽略日志文件
-*.log
 
 # 忽略数据库文件
 *.sqlite
@@ -62,7 +51,7 @@ Thumbs.db
 node_modules/
 package-lock.json
 yarn.lock
-pom.xml
+#pom.xml
 target/
 build/
 
@@ -71,10 +60,10 @@ reports/
 coverage/
 
 # 忽略文档生成的文件
-docs/
-*.pdf
-*.docx
-*.xlsx
+#docs/
+#*.pdf
+#*.docx
+#*.xlsx
 
 # 忽略其他不需要版本控制的文件
 *.swp
