@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `scenic_spot`
     -- 内部景点列表
     `scenic_spot_list` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '内部景点列表（顿号分隔）',
     -- 旅拍图片 通过/间隔
-    `photo_url`        VARCHAR(1024)     NOT NULL DEFAULT '' COMMENT '旅拍图片（通过_间隔）',
+    `photo_url`        VARCHAR(1024)     NOT NULL DEFAULT '' COMMENT '旅拍图片（通过/间隔）',
     -- 标签 通过_间隔
     `tag_list`              VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '标签（通过_间隔）',
 

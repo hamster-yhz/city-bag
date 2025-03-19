@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS `food`
     `phone`       VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '联系电话',
     -- 著名美食列表
     `food_list`   VARCHAR(255)     NOT NULL DEFAULT '' COMMENT '著名美食列表（顿号分隔）',
-
+    -- 美食图片 通过/间隔
+    `photo_url`        VARCHAR(1024)     NOT NULL DEFAULT '' COMMENT '美食图片（通过/间隔）',
     -- 标签 通过_间隔
     `tag_list`    VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '标签（通过_间隔）',
 

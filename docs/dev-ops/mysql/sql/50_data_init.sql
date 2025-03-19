@@ -149,7 +149,7 @@ VALUES (NULL, -- 自动生成的主键
 
 
 -- 住宿表示例数据
-INSERT INTO `dormitory` (id, dormitory_id, dormitory_name, introduce, image_url, price, phone, tag_list, type, like_count, city_id,
+INSERT INTO `dormitory` (id, dormitory_id, dormitory_name, introduce, image_url, price, phone, photo_url, tag_list, type, like_count, city_id,
                          create_time, update_time, is_deleted)
 VALUES (NULL, -- 自动生成的主键
         UUID(), -- 住宿id
@@ -158,6 +158,7 @@ VALUES (NULL, -- 自动生成的主键
         'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0', -- 图片地址
         '1000元',
         '13800138000',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0', -- 实拍图片
         '环境优美_设施齐全_服务到位',
         1, -- 类型：酒店
         200, -- 点赞数量
@@ -173,6 +174,7 @@ VALUES (NULL, -- 自动生成的主键
         'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0', -- 图片地址
         '2000元',
         '13800138000',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '环境优美_服务到位',
         1,
         300,
@@ -187,6 +189,7 @@ VALUES (NULL, -- 自动生成的主键
         'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0', -- 图片地址
         '600元',
         '13800138000',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '小而美',
         2, -- 类型：民宿
         100,
@@ -201,6 +204,7 @@ VALUES (NULL, -- 自动生成的主键
         'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0', -- 图片地址
         '200元',
         '13800138000',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '民风淳朴_环境优美',
         2,
         150,
@@ -215,6 +219,7 @@ VALUES (NULL, -- 自动生成的主键
         'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0', -- 图片地址
         '260元',
         '13800138000',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '经济实惠',
         2,
         90,
@@ -225,7 +230,7 @@ VALUES (NULL, -- 自动生成的主键
 
 
 -- 美食表示例数据
-INSERT INTO `food` (id, food_id, food_name, introduce, image_url, open_time, price, phone, food_list, tag_list, like_count, city_id, create_time, update_time,
+INSERT INTO `food` (id, food_id, food_name, introduce, image_url, open_time, price, phone, food_list, photo_url, tag_list, like_count, city_id, create_time, update_time,
                     is_deleted)
 VALUES (NULL, -- 自动生成的主键
         UUID(), -- 美食id
@@ -236,6 +241,7 @@ VALUES (NULL, -- 自动生成的主键
         '80元', -- 人均价格
         '13800138000', -- 联系电话
         '北京烤鸭,北京烤鸭,北京烤鸭', -- 著名美食列表
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         'yummy', -- 标签列表
         1000, -- 点赞数量
         (SELECT city_id FROM city WHERE city_name = '北京' LIMIT 1), -- 所属城市
@@ -252,6 +258,7 @@ VALUES (NULL, -- 自动生成的主键
         '20元',
         '13800138000',
         '小笼包',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '种类多样_松软',
         750,
         (SELECT city_id FROM city WHERE city_name = '上海' LIMIT 1),
@@ -267,6 +274,7 @@ VALUES (NULL, -- 自动生成的主键
         '6元',
         '13800138000',
         '小笼包',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '种类多样_松软',
         600,
         (SELECT city_id FROM city WHERE city_name = '广州' LIMIT 1),
@@ -282,6 +290,7 @@ VALUES (NULL, -- 自动生成的主键
         '400元',
         '13800138000',
         '小笼包',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '麻辣鲜香',
         1000,
         (SELECT city_id FROM city WHERE city_name = '成都' LIMIT 1),
@@ -297,6 +306,7 @@ VALUES (NULL, -- 自动生成的主键
         '100元',
         '13800138000',
         '小笼包',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0/d5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '皮酥麻',
         400,
         (SELECT city_id FROM city WHERE city_name = '南京' LIMIT 1),

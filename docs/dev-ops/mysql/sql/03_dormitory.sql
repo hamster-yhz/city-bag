@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS `dormitory`
     `price`          VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '人均价格',
     -- 联系电话
     `phone`          VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '联系电话',
+    -- 实地图片 通过/间隔
+    `photo_url`        VARCHAR(1024)     NOT NULL DEFAULT '' COMMENT '实地图片图片（通过/间隔）',
     -- 标签 通过_间隔
     `tag_list`       VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '标签（通过_间隔）',
     -- 乐观锁版本号 --

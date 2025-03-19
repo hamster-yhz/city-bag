@@ -42,6 +42,9 @@ public class Food {
     @TableField("phone")
     private String phone;
 
+    @TableField("photo_url")
+    private String photoUrl;
+
     @TableField("food_list")
     private String foodList;
 

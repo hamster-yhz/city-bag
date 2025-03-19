@@ -30,7 +30,11 @@ public class DormitoryVO {
 
     private String phone;
 
+    private List<String> photoUrl;
+
     private List<String> tagList;
+
+    private Integer photoCount;
 
     private Integer tagCount;
 

@@ -39,6 +39,9 @@ public class Dormitory {
     @TableField("phone")
     private String phone;
 
+    @TableField("photo_url")
+    private String photoUrl;
+
     @TableField("tag_list")
     private String tagList;
 

@@ -230,9 +230,21 @@ public class CityServiceImpl implements ICityService {
 
         // 转换VO
         dormitoryVO = Entity2VO.Dormitory2DormitoryVO(dormitory);
+
+        // 封面图
         dormitoryVO.setDormitoryImg(ossDemoService.generatePresignedUrl(dormitory.getImageUrl(),  Common.QUERY_COVER_TIME));
 
+        // 相册图
+        List<String> photoUrls = SplitUtil.splitBySlash(dormitory.getPhotoUrl()).stream()
+                .map(url -> ossDemoService.generatePresignedUrl(url, Common.QUERY_COVER_TIME))
+                .toList();
+        dormitoryVO.setPhotoUrl(photoUrls);
+        dormitoryVO.setPhotoCount(photoUrls.size());
+
+        // 标签数量
         dormitoryVO.setTagCount(dormitoryVO.getTagList().size());
+
+        // 收藏
         dormitoryVO.setIsCollect(queryCollection(userId, Common.DORMITORY, dormitoryId));
 
         // 写入缓存
@@ -260,16 +272,23 @@ public class CityServiceImpl implements ICityService {
             throw new AppException(String.valueOf(GlobalServiceStatusCode.SCENIC_SPOT_NOT_EXIST.getCode()), GlobalServiceStatusCode.SCENIC_SPOT_NOT_EXIST.getMessage());
         }
 
+        // 转换VO
         scenicSpotVO = Entity2VO.ScenicSpot2ScenicSpotVO(spot);
+
+        // 封面图
         scenicSpotVO.setScenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME));
 
+        // 相册图
         List<String> photoUrls = SplitUtil.splitBySlash(spot.getPhotoUrl()).stream()
                 .map(url -> ossDemoService.generatePresignedUrl(url, Common.QUERY_COVER_TIME))
                 .toList();
-
         scenicSpotVO.setPhotoUrl(photoUrls);
         scenicSpotVO.setPhotoCount(photoUrls.size());
+
+        // 标签数量
         scenicSpotVO.setTagCount(scenicSpotVO.getTagList().size());
+
+        // 收藏
         scenicSpotVO.setIsCollect(queryCollection(userId, Common.SCENIC_SPOT, scenicSpotId));
 
         // 写入缓存
@@ -298,13 +317,28 @@ public class CityServiceImpl implements ICityService {
             throw new AppException(String.valueOf(GlobalServiceStatusCode.FOOD_NOT_EXIST.getCode()), GlobalServiceStatusCode.FOOD_NOT_EXIST.getMessage());
         }
 
+        // 转换VO
         foodVO = Entity2VO.Food2FoodVO(food);
+
+        // 封面图
         foodVO.setFoodImg(ossDemoService.generatePresignedUrl(food.getImageUrl(),  Common.QUERY_COVER_TIME));
+
+        // 相册图
+        List<String> photoUrls = SplitUtil.splitBySlash(food.getPhotoUrl()).stream()
+                .map(url -> ossDemoService.generatePresignedUrl(url, Common.QUERY_COVER_TIME))
+                .toList();
+        foodVO.setPhotoUrl(photoUrls);
+        foodVO.setPhotoCount(photoUrls.size());
+
+        // 标签数量
+        foodVO.setTagCount(foodVO.getTagList().size());
+
+        // 收藏
+        foodVO.setIsCollect(queryCollection(userId, Common.FOOD, foodId));
 
         redissonService.setValue(cacheKey, foodVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
 
-        foodVO.setTagCount(foodVO.getTagList().size());
-        foodVO.setIsCollect(queryCollection(userId, Common.FOOD, foodId));
+
 
         return foodVO;
     }

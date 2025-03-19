@@ -34,7 +34,11 @@ public class FoodVO {
 
     private String foodList;
 
+    private List<String> photoUrl;
+
     private List<String> tagList;
+
+    private Integer photoCount;
 
     private Integer tagCount;
 
