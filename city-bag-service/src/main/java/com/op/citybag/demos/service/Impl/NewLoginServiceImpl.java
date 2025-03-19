@@ -10,6 +10,7 @@ import com.op.citybag.demos.model.VO.login.TokenVO;
 import com.op.citybag.demos.model.common.Common;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.common.RedisKey;
+import com.op.citybag.demos.oss.OSSService;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.service.INewLoginService;
 import com.op.citybag.demos.utils.Entity2VO;
@@ -42,6 +43,9 @@ public class NewLoginServiceImpl implements INewLoginService {
     @Autowired
     private RedissonService redissonService;
 
+    @Autowired
+    private OSSService ossService;
+
     @Override
     public LoginVO wxLogin(String openid) {
 
@@ -68,6 +72,8 @@ public class NewLoginServiceImpl implements INewLoginService {
         String refreshToken = createRefreshToken(user);
 
         LoginVO loginVO = Entity2VO.User2LoginVO(user);
+        //设置头像
+        loginVO.setAvatarUrl(ossService.generatePresignedUrl(user.getImageUrl(), Common.QUERY_COVER_TIME));
         loginVO.setAccessToken(accessToken);
         loginVO.setRefreshToken(refreshToken);
 
@@ -105,6 +111,8 @@ public class NewLoginServiceImpl implements INewLoginService {
         String refreshToken = createRefreshToken(user);
 
         LoginVO loginVO = Entity2VO.User2LoginVO(user);
+        //设置头像
+        loginVO.setAvatarUrl(ossService.generatePresignedUrl(user.getImageUrl(), Common.QUERY_COVER_TIME));
         loginVO.setAccessToken(accessToken);
         loginVO.setRefreshToken(refreshToken);
 

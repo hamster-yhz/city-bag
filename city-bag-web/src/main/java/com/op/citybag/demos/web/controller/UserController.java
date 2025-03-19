@@ -2,21 +2,21 @@ package com.op.citybag.demos.web.controller;
 
 import com.op.citybag.demos.model.Entity.User;
 import com.op.citybag.demos.model.VO.user.CollectionListVO;
-import com.op.citybag.demos.model.VO.user.CollectionVO;
 import com.op.citybag.demos.model.VO.user.UserVO;
 import com.op.citybag.demos.service.IUserService;
 import com.op.citybag.demos.web.common.DTO.user.CollectionDTO;
 import com.op.citybag.demos.web.common.DTO.user.CollectionQueryDTO;
-import com.op.citybag.demos.web.common.OPResult;
 import com.op.citybag.demos.web.common.DTO.user.UserDTO;
-import com.op.citybag.demos.web.constraint.LoginVerification;
-import com.op.citybag.demos.web.constraint.SelfPermissionVerification;
+import com.op.citybag.demos.web.common.OPResult;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.signature.qual.FieldDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -44,10 +44,10 @@ public class UserController {
 //    @LoginVerification
 //    @SelfPermissionVerification
     @PostMapping("modifyUserInfo")
-    public OPResult modifyUserInfo(@RequestBody UserDTO userDTO){
-        try{
-            log.info("修改个人信息开始,userId:{}",userDTO.getUserId());
-            User user =User.builder()
+    public OPResult modifyUserInfo(@RequestBody UserDTO userDTO) {
+        try {
+            log.info("修改个人信息开始,userId:{}", userDTO.getUserId());
+            User user = User.builder()
                     .userId(userDTO.getUserId())
                     .userName(userDTO.getUserName())
                     .gender(userDTO.getGender())
@@ -55,10 +55,39 @@ public class UserController {
                     .personalizedSignature(userDTO.getPersonalizedSignature())
                     .build();
             userService.modifyUserInfo(user);
-            log.info("修改个人信息成功,userId:{}",userDTO.getUserId());
+            log.info("修改个人信息成功,userId:{}", userDTO.getUserId());
             return OPResult.SUCCESS();
-        }catch (Exception e){
-            log.error("修改个人信息失败,userId:{},cuz:{}",userDTO.getUserId(),e.getMessage());
+        } catch (Exception e) {
+            log.error("修改个人信息失败,userId:{},cuz:{}", userDTO.getUserId(), e.getMessage());
+            return OPResult.FAIL(e);
+        }
+    }
+
+    /**
+     * 头像上传 (文件大小限制为5MB)
+     * @param file
+     * @param userId
+     * @return
+     */
+    @PostMapping("uploadAvatar")
+//    @SelfPermissionVerification
+    public OPResult uploadAvatar(
+            @RequestPart("file") MultipartFile file,
+            @RequestHeader("userId") String userId) {
+
+        if(userId == null){
+            return OPResult.FAIL("userId不能为空");
+        }
+
+        try {
+            log.info("头像上传开始,userId:{}", userId);
+
+            userService.updateUserAvatar(userId, file);
+
+            log.info("头像上传成功,userId:{}", userId);
+            return OPResult.SUCCESS();
+        } catch (Exception e) {
+            log.error("头像上传失败", e);
             return OPResult.FAIL(e);
         }
     }
@@ -69,19 +98,20 @@ public class UserController {
 //    @LoginVerification
 //    @SelfPermissionVerification
     @PostMapping("queryUserInfo")
-    public OPResult queryUserInfo(@RequestBody UserDTO userDTO, HttpServletRequest request){
-        try{
+    public OPResult queryUserInfo(@RequestBody UserDTO userDTO, HttpServletRequest request) {
+        try {
             UserVO userInfo = userService.queryUserInfo(userDTO.getUserId());
-            log.info("查询个人信息成功,userId:{}",userInfo.getUserId());
+            log.info("查询个人信息成功,userId:{}", userInfo.getUserId());
             return OPResult.SUCCESS(userInfo);
-        }catch (Exception e){
-            log.error("查询个人信息失败,userId:{},cuz:{}",userDTO.getUserId(),e.getMessage());
+        } catch (Exception e) {
+            log.error("查询个人信息失败,userId:{},cuz:{}", userDTO.getUserId(), e.getMessage());
             return OPResult.FAIL(e);
         }
     }
 
     /**
      * 收藏
+     *
      * @param collectionDTO
      * @return
      */
@@ -101,6 +131,7 @@ public class UserController {
 
     /**
      * 取消收藏
+     *
      * @param collectionDTO
      * @return
      */
@@ -120,6 +151,7 @@ public class UserController {
 
     /**
      * 获取收藏列表
+     *
      * @param collectionQueryDTO
      * @return
      */

@@ -17,11 +17,15 @@
 package com.op.citybag.demos.oss;
 
 import com.aliyun.oss.OSS;
+import com.op.citybag.demos.exception.AppException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 
 @Service
@@ -40,6 +44,25 @@ public class OSSServiceImpl implements OSSService {
                 objectKey,
                 Date.from(Instant.now().plusSeconds(expireSeconds))
         ).toString();
+    }
+
+    @Override
+    public String uploadCompressedImage(MultipartFile file, String userId) {
+        // 1. 生成唯一文件名
+        String fileName = UUID.randomUUID() + "_" + System.currentTimeMillis() + ".jpg";
+
+        // 2. 创建OSS存储路径
+        String path = "user/" + userId + "/images/" + fileName;
+
+        try {
+            // 3. 直接存储压缩后的图片（无需服务端解压）
+            ossClient.putObject(ossConfigProperties.getBucketName(), path, file.getInputStream());
+
+            // 4. 返回访问地址 1day
+            return path;
+        } catch (IOException e) {
+            throw new AppException("文件上传失败");
+        }
     }
 
 }

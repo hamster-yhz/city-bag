@@ -2,11 +2,12 @@ use city_bag;
 
 
 -- 用户表示例数据
-INSERT INTO `user` (id, user_id, user_name, phone, openid, stu_id, password, gender, birthday,
+INSERT INTO `user` (id, user_id, user_name, image_url, phone, openid, stu_id, password, gender, birthday,
                     personalized_signature, jurisdiction, like_count, create_time, update_time, is_deleted)
 VALUES (NULL, -- 自动生成的主键
         UUID(), -- 随机生成的user_id
         '张三', -- 用户名
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0', -- 头像地址
         '13800138000', -- 手机号码
         'openid1234567890', -- openid
         'stu1234567890', -- stu_id
@@ -23,6 +24,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '李四',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '13900139000',
         'openid2345678901',
         'stu2345678901',
@@ -38,6 +40,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '王五',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '13600136000',
         'openid3456789012',
         'stu3456789012',
@@ -53,6 +56,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '赵六',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '13700137000',
         'openid4567890123',
         'stu4567890123',
@@ -68,6 +72,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '陈七',
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0',
         '13800138001',
         'openid5678901234',
         'stu5678901234',

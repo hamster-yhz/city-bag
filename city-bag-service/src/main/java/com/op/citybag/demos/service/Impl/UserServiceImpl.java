@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.op.citybag.demos.exception.AppException;
 import com.op.citybag.demos.mapper.*;
 import com.op.citybag.demos.model.Entity.*;
@@ -17,16 +16,15 @@ import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.oss.OSSService;
 import com.op.citybag.demos.redis.RedissonService;
-import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.service.IUserService;
 import com.op.citybag.demos.utils.Entity2VO;
 import com.op.citybag.demos.utils.SnowflakeIdWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -82,9 +80,10 @@ public class UserServiceImpl implements IUserService {
         User user = userMapper.selectOne(wrapper);
         if (user != null) {
             UserVO userVO = Entity2VO.User2UserVO(user);
+            userVO.setAvatarUrl(ossService.generatePresignedUrl(user.getImageUrl(), Common.QUERY_COVER_TIME));
             log.info("正在缓存用户信息,userId: {}", userId);
             redissonService.setValue(RedisKey.USER_INFO + userId, userVO);
-            redissonService.setValueExpired(RedisKey.USER_INFO + userId,  Common.REDIS_EXPIRE_TIME_10_MINUTES);
+            redissonService.setValueExpired(RedisKey.USER_INFO + userId, Common.REDIS_EXPIRE_TIME_10_MINUTES);
             return userVO;
         }
         return null;
@@ -95,6 +94,7 @@ public class UserServiceImpl implements IUserService {
     public void modifyUserInfo(User user) {
 
         log.info("正在修改用户信息,userId: {}", user.getUserId());
+
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq(Common.USER_ID, user.getUserId());
 
@@ -107,6 +107,30 @@ public class UserServiceImpl implements IUserService {
         }
 
 
+    }
+
+    @Override
+    public void updateUserAvatar(String userId, MultipartFile file) {
+        String avatarUrl = null;
+
+        if (file != null) {
+            avatarUrl = ossService.uploadCompressedImage(file, userId);
+            log.info("用户头像上传成功,avatarUrl: {}", avatarUrl);
+        }
+
+        User user = User.builder().
+                userId(userId)
+                .imageUrl(avatarUrl)
+                .build();
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq(Common.USER_ID, user.getUserId());
+        int rowsAffected = userMapper.update(user, wrapper);
+        if (rowsAffected > 0) {
+            log.info("用户头像修改成功,受影响的行数:{},userId: {}", rowsAffected, user.getUserId());
+        } else {
+            log.info("用户头像修改失败,未找到匹配的用户或更新操作未执行,userId: {}", user.getUserId());
+            throw new AppException(String.valueOf(GlobalServiceStatusCode.USER_UPDATE_ERROR.getCode()), GlobalServiceStatusCode.USER_UPDATE_ERROR.getMessage());
+        }
     }
 
     @Override
@@ -132,7 +156,7 @@ public class UserServiceImpl implements IUserService {
                     .build();
             log.info("正在尝试收藏,userId: {},entityType: {},entityId: {}", userId, entityType, entityId);
             lock = redissonService.getLock(lockKey);
-            if (lock.tryLock(3, 10, TimeUnit.SECONDS)){
+            if (lock.tryLock(3, 10, TimeUnit.SECONDS)) {
                 try {
                     userCollectionMapper.insert(collection);
                 } catch (Exception e) {
@@ -141,7 +165,7 @@ public class UserServiceImpl implements IUserService {
             }
 
 
-        }  catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             //TODO 异常处理
             Thread.currentThread().interrupt();
             log.error("操作被中断：{}", e.getMessage());
@@ -181,7 +205,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public CollectionListVO getCollections(String userId, String entityType, Integer pageNum, Integer pageSize){
+    public CollectionListVO getCollections(String userId, String entityType, Integer pageNum, Integer pageSize) {
 
         log.info("正在获取用户收藏列表,userId: {},entityType: {},pageNum: {},pageSize: {}", userId, entityType, pageNum, pageSize);
         Page<UserCollection> page = new Page<>(pageNum, pageSize);
@@ -204,7 +228,6 @@ public class UserServiceImpl implements IUserService {
 
             String entityImg = null;
             String entityName = null;
-
 
 
             // 根据不同类型获取信息
@@ -254,7 +277,7 @@ public class UserServiceImpl implements IUserService {
                 .pageNum(pageNum)
                 .pageSize(pageSize)
                 .total(result.getTotal())
-               .build();
+                .build();
     }
 
 }

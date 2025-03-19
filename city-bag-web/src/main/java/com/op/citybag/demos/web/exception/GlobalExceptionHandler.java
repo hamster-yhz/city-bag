@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -77,7 +78,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 自定义验证异常 BindException
+     * 自定义异常 AppException
      */
     @ExceptionHandler(AppException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -86,5 +87,14 @@ public class GlobalExceptionHandler {
         return OPResult.RESPONSE(e.getCode(), e.getInfo());
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public OPResult handleSizeExceededException(MaxUploadSizeExceededException e) {
+        log.error("文件大小超过限制", e);
+        return OPResult.RESPONSE(
+                String.valueOf(GlobalServiceStatusCode.PARAM_NOT_VALID.getCode()),
+            "文件大小超过限制"
+        );
+    }
 
 }

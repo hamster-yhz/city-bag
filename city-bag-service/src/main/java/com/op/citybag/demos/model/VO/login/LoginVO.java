@@ -66,6 +66,11 @@ public class LoginVO {
     private LocalDate birthday;
 
     /**
+     * 用户头像
+     */
+    private String avatarUrl;
+
+    /**
      * 用户个性签名
      */
     private String personalizedSignature;

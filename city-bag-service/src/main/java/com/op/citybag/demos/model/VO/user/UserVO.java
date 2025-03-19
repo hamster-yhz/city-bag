@@ -37,6 +37,11 @@ public class UserVO {
     private String phone;
 
     /**
+     * 用户头像
+     */
+    private String avatarUrl;
+
+    /**
      * 用户学号
      */
     private String stuId;

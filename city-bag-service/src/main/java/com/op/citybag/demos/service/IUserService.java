@@ -4,6 +4,7 @@ import com.op.citybag.demos.model.Entity.User;
 import com.op.citybag.demos.model.VO.user.CollectionListVO;
 import com.op.citybag.demos.model.VO.user.CollectionVO;
 import com.op.citybag.demos.model.VO.user.UserVO;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface IUserService {
 
@@ -22,6 +23,15 @@ public interface IUserService {
      * @return
      */
     void modifyUserInfo(User user);
+
+    /**
+     * 更改用户头像
+     *
+     * @param userId
+     * @param file
+     * @return
+     */
+    void updateUserAvatar(String userId, MultipartFile file);
 
     /**
      * 添加收藏
