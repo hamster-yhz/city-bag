@@ -1,5 +1,6 @@
 package com.op.citybag.demos.service.Impl;
 
+import com.alibaba.cloud.context.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -28,12 +29,11 @@ import com.op.citybag.demos.service.ICityService;
 import com.op.citybag.demos.utils.Entity2VO;
 import com.op.citybag.demos.utils.SplitUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.C;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -68,15 +68,20 @@ public class CityServiceImpl implements ICityService {
     @Autowired
     private UserCollectionMapper userCollectionMapper;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
     @Override
-    public CityVO querySingleCity(String cityId) {
+    public CityVO querySingleCity(String userId, String cityId) {
 
         String cacheKey = RedisKey.CITY_INFO + cityId;
 
         // 尝试从缓存获取
         CityVO cityVO = redissonService.getValue(cacheKey);
         if (cityVO != null) {
-            log.info("从缓存获取住宿信息: {}", cityId);
+            log.info("从缓存获取城市信息: {}", cityId);
+            // 设置收藏状态
+            cityVO.setIsCollect(queryCollection(userId, Common.CITY, cityVO.getCityId()));
             return cityVO;
         }
 
@@ -92,7 +97,15 @@ public class CityServiceImpl implements ICityService {
 
         // 转换VO
         cityVO = Entity2VO.City2CityVO(city);
+
+        // 设置封面图片
         cityVO.setCityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(),  Common.QUERY_COVER_TIME));
+
+        // 设置收藏状态
+        cityVO.setIsCollect(queryCollection(userId, Common.CITY, cityVO.getCityId()));
+
+        // 发送用户访问记录
+        sendUserVisitRecord(userId, Common.CITY, cityVO.getCityId());
 
         // 写入缓存
         redissonService.setValue(cacheKey, cityVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
@@ -128,7 +141,7 @@ public class CityServiceImpl implements ICityService {
     }
 
     @Override
-    public ScenicSpotListVO queryCityScenicSpot(String cityId, Integer pageNum, Integer pageSize) {
+    public ScenicSpotListVO queryCityScenicSpot(String userId, String cityId, Integer pageNum, Integer pageSize) {
 
         // 构建分页对象
         Page<ScenicSpot> page = new Page<>(pageNum, pageSize);
@@ -143,6 +156,7 @@ public class CityServiceImpl implements ICityService {
                         .scenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME))
                         .visitTime(spot.getVisitTime())
                         .address(spot.getAddress())
+                        .IsCollect(queryCollection(userId, Common.SCENIC_SPOT, spot.getScenicSpotId()))
                         .build())
                 .collect(Collectors.toList());
 
@@ -156,7 +170,7 @@ public class CityServiceImpl implements ICityService {
     }
 
     @Override
-    public FoodListVO queryCityFood(String cityId, Integer pageNum, Integer pageSize) {
+    public FoodListVO queryCityFood(String userId, String cityId, Integer pageNum, Integer pageSize) {
         // 查询美食封面列表
         Page<Food> page = new Page<>(pageNum, pageSize);
         IPage<Food> foodPage = foodMapper.selectPage(page,
@@ -168,6 +182,7 @@ public class CityServiceImpl implements ICityService {
                 .map(food -> FoodCoverVO.builder()
                         .foodId(food.getFoodId())
                         .foodName(food.getFoodName())
+                        .IsCollect(queryCollection(userId, Common.FOOD, food.getFoodId()))
                         .foodImg(ossDemoService.generatePresignedUrl(food.getImageUrl(),  Common.QUERY_COVER_TIME))
                         .build())
                 .collect(Collectors.toList());
@@ -182,7 +197,7 @@ public class CityServiceImpl implements ICityService {
     }
 
     @Override
-    public DormitoryListVO queryCityDormitory(String cityId, Integer pageNum, Integer pageSize) {
+    public DormitoryListVO queryCityDormitory(String userId, String cityId, Integer pageNum, Integer pageSize) {
         // 查询住宿封面列表
         Page<Dormitory> page = new Page<>(pageNum, pageSize);
         IPage<Dormitory> dormPage = dormitoryMapper.selectPage(page,
@@ -194,6 +209,7 @@ public class CityServiceImpl implements ICityService {
                 .map(dorm -> DormitoryCoverVO.builder()
                         .dormitoryId(dorm.getDormitoryId())
                         .dormitoryName(dorm.getDormitoryName())
+                        .IsCollect(queryCollection(userId, Common.DORMITORY, dorm.getDormitoryId()))
                         .dormitoryImg(ossDemoService.generatePresignedUrl(dorm.getImageUrl(),  Common.QUERY_COVER_TIME))
                         .build())
                 .collect(Collectors.toList());
@@ -215,6 +231,8 @@ public class CityServiceImpl implements ICityService {
         DormitoryVO dormitoryVO = redissonService.getValue(cacheKey);
         if (dormitoryVO != null) {
             log.info("从缓存获取住宿信息: {}", dormitoryId);
+            // 收藏
+            dormitoryVO.setIsCollect(queryCollection(userId, Common.DORMITORY, dormitoryId));
             return dormitoryVO;
         }
 
@@ -247,6 +265,9 @@ public class CityServiceImpl implements ICityService {
         // 收藏
         dormitoryVO.setIsCollect(queryCollection(userId, Common.DORMITORY, dormitoryId));
 
+        // 发送用户访问记录
+        sendUserVisitRecord(userId, Common.DORMITORY, dormitoryId);
+
         // 写入缓存
         redissonService.setValue(cacheKey, dormitoryVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
         return dormitoryVO;
@@ -259,6 +280,7 @@ public class CityServiceImpl implements ICityService {
         ScenicSpotVO scenicSpotVO = redissonService.getValue(cacheKey);
         if (scenicSpotVO != null) {
             log.info("从缓存获取景点信息: {}", scenicSpotId);
+            scenicSpotVO.setIsCollect(queryCollection(userId, Common.SCENIC_SPOT, scenicSpotId));
             return scenicSpotVO;
         }
 
@@ -291,6 +313,9 @@ public class CityServiceImpl implements ICityService {
         // 收藏
         scenicSpotVO.setIsCollect(queryCollection(userId, Common.SCENIC_SPOT, scenicSpotId));
 
+        // 记录用户访问记录
+        sendUserVisitRecord(userId, Common.SCENIC_SPOT, scenicSpotId);
+
         // 写入缓存
         redissonService.setValue(cacheKey, scenicSpotVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
 
@@ -299,10 +324,12 @@ public class CityServiceImpl implements ICityService {
 
     @Override
     public FoodVO querySingleFood(String foodId, String userId) {
-        String cacheKey = RedisKey.FOOD_INFO + foodId;
 
+        // 尝试从缓存获取
+        String cacheKey = RedisKey.FOOD_INFO + foodId;
         FoodVO foodVO = redissonService.getValue(cacheKey);
         if (foodVO != null) {
+            foodVO.setIsCollect(queryCollection(userId, Common.FOOD, foodId));
             log.info("从缓存获取美食信息: {}", foodId);
             return foodVO;
         }
@@ -336,14 +363,27 @@ public class CityServiceImpl implements ICityService {
         // 收藏
         foodVO.setIsCollect(queryCollection(userId, Common.FOOD, foodId));
 
+        // 记录浏览历史
+        sendUserVisitRecord(userId, Common.FOOD, foodId);
+
+        // 写入缓存
         redissonService.setValue(cacheKey, foodVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
-
-
 
         return foodVO;
     }
 
+    /**
+     * 查询是否已收藏
+     * @param userId
+     * @param entityType
+     * @param entityId
+     * @return
+     */
     private Integer queryCollection(String userId, String entityType, String entityId) {
+        // 未登录
+        if (StringUtils.isEmpty(userId)) {
+            return 0;
+        }
         // 检查是否已收藏
         if(userCollectionMapper.exists(new LambdaQueryWrapper<UserCollection>()
                 .eq(UserCollection::getUserId, userId)
@@ -355,4 +395,22 @@ public class CityServiceImpl implements ICityService {
             return 0;
         }
     }
+
+    /**
+     * 发送用户访问记录
+     * @param userId
+     * @param entityType
+     * @param entityId
+     */
+    private void sendUserVisitRecord(String userId, String entityType, String entityId) {
+        if (StringUtils.isEmpty(userId)) {
+            return;
+        }
+        UserVisitRecord record = new UserVisitRecord();
+        record.setUserId(userId);
+        record.setEntityType(entityType);
+        record.setEntityId(entityId);
+        rabbitTemplate.convertAndSend("user-visit-queue", record);
+    }
+
 }

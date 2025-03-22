@@ -24,6 +24,11 @@ import javax.validation.constraints.NotNull;
 public class QueryCityContentDTO {
 
     /**
+     * 用户id(可以为空)
+     */
+    private String userId;
+
+    /**
      * 城市id
      */
     @NotBlank(message = "城市id不能为空")

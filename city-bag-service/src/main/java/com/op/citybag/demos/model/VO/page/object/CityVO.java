@@ -30,4 +30,6 @@ public class CityVO {
 
     private Integer likeCount;
 
+    private Integer IsCollect;
+
 }

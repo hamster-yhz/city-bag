@@ -1,4 +1,4 @@
-package com.op.citybag.demos.service.Impl;
+package com.op.citybag.demos.consumer;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;

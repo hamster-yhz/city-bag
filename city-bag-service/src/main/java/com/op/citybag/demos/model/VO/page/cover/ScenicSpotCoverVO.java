@@ -26,4 +26,6 @@ public class ScenicSpotCoverVO {
 
     private String scenicSpotImg;
 
+    private Integer IsCollect;
+
 }

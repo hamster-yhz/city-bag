@@ -48,7 +48,7 @@ public class CityController {
         try {
             log.info("查询单个城市信息开始");
 
-            CityVO cityVO = cityService.querySingleCity(querySingleCityDTO.getCityId());
+            CityVO cityVO = cityService.querySingleCity(querySingleCityDTO.getUserId(), querySingleCityDTO.getCityId());
 
             log.info("查询单个城市信息成功");
             return OPResult.SUCCESS(cityVO);
@@ -95,7 +95,7 @@ public class CityController {
         try {
             log.info("查询城市对应的景点开始");
 
-            ScenicSpotListVO scenicSpotListVO = cityService.queryCityScenicSpot(queryCityContentDTO.getCityId(), queryCityContentDTO.getPageNum(), queryCityContentDTO.getPageSize());
+            ScenicSpotListVO scenicSpotListVO = cityService.queryCityScenicSpot(queryCityContentDTO.getUserId(), queryCityContentDTO.getCityId(), queryCityContentDTO.getPageNum(), queryCityContentDTO.getPageSize());
 
             log.info("查询城市对应的景点成功");
             return OPResult.SUCCESS(scenicSpotListVO);
@@ -116,7 +116,7 @@ public class CityController {
         try {
             log.info("查询城市对应的美食开始");
 
-            FoodListVO foodListVO = cityService.queryCityFood(queryCityContentDTO.getCityId(), queryCityContentDTO.getPageNum(), queryCityContentDTO.getPageSize());
+            FoodListVO foodListVO = cityService.queryCityFood(queryCityContentDTO.getUserId(), queryCityContentDTO.getCityId(), queryCityContentDTO.getPageNum(), queryCityContentDTO.getPageSize());
 
             log.info("查询城市对应的美食成功");
             return OPResult.SUCCESS(foodListVO);
@@ -138,7 +138,7 @@ public class CityController {
         try {
             log.info("查询城市对应的住宿开始");
 
-            DormitoryListVO dormitoryListVO = cityService.queryCityDormitory(queryCityContentDTO.getCityId(), queryCityContentDTO.getPageNum(), queryCityContentDTO.getPageSize());
+            DormitoryListVO dormitoryListVO = cityService.queryCityDormitory(queryCityContentDTO.getUserId(), queryCityContentDTO.getCityId(), queryCityContentDTO.getPageNum(), queryCityContentDTO.getPageSize());
 
             log.info("查询城市对应的住宿成功");
             return OPResult.SUCCESS(dormitoryListVO);
