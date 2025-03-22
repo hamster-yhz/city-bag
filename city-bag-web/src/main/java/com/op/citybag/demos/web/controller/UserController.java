@@ -1,19 +1,18 @@
 package com.op.citybag.demos.web.controller;
 
 import com.op.citybag.demos.model.Entity.User;
-import com.op.citybag.demos.model.VO.user.CollectionListVO;
+import com.op.citybag.demos.model.VO.page.list.CollectionListVO;
+import com.op.citybag.demos.model.VO.page.list.UserVisitRecordListVO;
 import com.op.citybag.demos.model.VO.user.UserVO;
 import com.op.citybag.demos.service.IUserService;
 import com.op.citybag.demos.web.common.DTO.user.CollectionDTO;
-import com.op.citybag.demos.web.common.DTO.user.CollectionQueryDTO;
+import com.op.citybag.demos.web.common.DTO.user.CollectionOrHistoryQueryDTO;
 import com.op.citybag.demos.web.common.DTO.user.UserDTO;
 import com.op.citybag.demos.web.common.OPResult;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.signature.qual.FieldDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -152,24 +151,41 @@ public class UserController {
     /**
      * 获取收藏列表
      *
-     * @param collectionQueryDTO
+     * @param collectionOrHistoryQueryDTO
      * @return
      */
     //    @SelfPermissionVerification
 //    @LoginVerification
     @PostMapping("collections")
-    public OPResult getCollections(@RequestBody CollectionQueryDTO collectionQueryDTO) {
+    public OPResult getCollections(@RequestBody CollectionOrHistoryQueryDTO collectionOrHistoryQueryDTO) {
         try {
-            log.info("获取收藏列表开始 userId:{}", collectionQueryDTO.getUserId());
+            log.info("获取收藏列表开始 userId:{}", collectionOrHistoryQueryDTO.getUserId());
 
-            CollectionListVO collections = userService.getCollections(collectionQueryDTO.getUserId(), collectionQueryDTO.getEntityType(), collectionQueryDTO.getPageNum(), collectionQueryDTO.getPageSize());
+            CollectionListVO collections = userService.getCollections(collectionOrHistoryQueryDTO.getUserId(), collectionOrHistoryQueryDTO.getEntityType(), collectionOrHistoryQueryDTO.getPageNum(), collectionOrHistoryQueryDTO.getPageSize());
             return OPResult.SUCCESS(collections);
 
         } catch (Exception e) {
-            log.error("获取收藏列表失败 userId:{}", collectionQueryDTO.getUserId(), e);
+            log.error("获取收藏列表失败 userId:{}", collectionOrHistoryQueryDTO.getUserId(), e);
             return OPResult.FAIL(e);
         }
     }
 
+    /**
+     * 获取用户浏览历史
+     * @param
+     */
+    @PostMapping("history")
+    public OPResult getHistory(@RequestBody CollectionOrHistoryQueryDTO collectionOrHistoryQueryDTO) {
+        try {
+            log.info("获取用户浏览历史开始 userId:{}", collectionOrHistoryQueryDTO.getUserId());
+
+            UserVisitRecordListVO userVisitRecords = userService.getUserVisitRecords(collectionOrHistoryQueryDTO.getUserId(), collectionOrHistoryQueryDTO.getEntityType(), collectionOrHistoryQueryDTO.getPageNum(), collectionOrHistoryQueryDTO.getPageSize());
+
+            return OPResult.SUCCESS(userVisitRecords);
+        } catch (Exception e){
+            log.error("获取用户浏览历史失败 userId:{}", collectionOrHistoryQueryDTO.getUserId(), e);
+            return OPResult.FAIL(e);
+        }
+    }
 
 }

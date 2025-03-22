@@ -21,5 +21,8 @@ public class DormitoryCoverVO {
     private String dormitoryName;
 
     private String dormitoryImg;
+
+    private Integer IsCollect;
+
 }
 

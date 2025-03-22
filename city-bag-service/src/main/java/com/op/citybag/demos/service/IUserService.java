@@ -1,10 +1,13 @@
 package com.op.citybag.demos.service;
 
 import com.op.citybag.demos.model.Entity.User;
-import com.op.citybag.demos.model.VO.user.CollectionListVO;
-import com.op.citybag.demos.model.VO.user.CollectionVO;
+import com.op.citybag.demos.model.Entity.UserVisitRecord;
+import com.op.citybag.demos.model.VO.page.list.CollectionListVO;
+import com.op.citybag.demos.model.VO.page.list.UserVisitRecordListVO;
 import com.op.citybag.demos.model.VO.user.UserVO;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface IUserService {
 
@@ -70,4 +73,12 @@ public interface IUserService {
      * @return
      */
     CollectionListVO getCollections(String userId, String entityType, Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取用户访问记录
+     *
+     * @param userId
+     * @return
+     */
+    UserVisitRecordListVO getUserVisitRecords(String userId, String entityType, Integer pageNum, Integer pageSize);
 }

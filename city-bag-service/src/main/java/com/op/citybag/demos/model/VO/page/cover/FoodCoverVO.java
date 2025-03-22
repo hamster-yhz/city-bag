@@ -21,4 +21,6 @@ public class FoodCoverVO {
     private String foodName;
 
     private String foodImg;
+
+    private Integer IsCollect;
 }

@@ -25,6 +25,10 @@ public class RabbitMQConfig implements RabbitTemplate.ConfirmCallback,RabbitTemp
     public static final String LIKE_EXCHANGE = "like.exchange";
     public static final String LIKE_ROUTING_KEY = "like.routingKey";
 
+    public static final String USER_VISIT_QUEUE = "user-visit-queue";
+    public static final String USER_VISIT_EXCHANGE = "user-visit.exchange";
+    public static final String USER_VISIT_ROUTING_KEY = "user-visit.routingKey";
+
 //    @Autowired
 //    @Lazy
 //    private RabbitTemplate rabbitTemplate;
@@ -58,6 +62,22 @@ public class RabbitMQConfig implements RabbitTemplate.ConfirmCallback,RabbitTemp
     public Binding bindingLike() {
         return BindingBuilder.bind(likeQueue())
                .to(likeExchange()).with(LIKE_ROUTING_KEY);
+    }
+
+    @Bean
+    public Queue userVisitQueue() {
+        return new Queue(USER_VISIT_QUEUE, true);
+    }
+
+    @Bean
+    public DirectExchange userVisitExchange() {
+        return new DirectExchange(USER_VISIT_EXCHANGE);
+    }
+
+    @Bean
+    public Binding bindingUserVisit() {
+        return BindingBuilder.bind(userVisitQueue())
+                .to(userVisitExchange()).with(USER_VISIT_ROUTING_KEY);
     }
 
     // 确认消息是否成功送达交换机

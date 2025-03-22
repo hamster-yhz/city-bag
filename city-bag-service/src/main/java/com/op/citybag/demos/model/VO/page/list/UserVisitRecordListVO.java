@@ -1,5 +1,7 @@
-package com.op.citybag.demos.model.VO.user;
+package com.op.citybag.demos.model.VO.page.list;
 
+import com.op.citybag.demos.model.VO.user.CollectionVO;
+import com.op.citybag.demos.model.VO.user.UserVisitRecordVO;
 import lombok.*;
 
 import java.util.List;
@@ -7,23 +9,21 @@ import java.util.List;
 /**
  * @Author: 原神
  * @Description:
- * @Date: 2025/3/15 22:06
+ * @Date: 2025/3/22 17:42
  * @Version: 1.0
  */
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ToString
-public class CollectionListVO {
-
+public class UserVisitRecordListVO {
 
     /**
      * 收藏列表
      */
-    private List<CollectionVO> collectionList;
+    private List<UserVisitRecordVO> visitRecordList;
 
     // 分页信息
     private Integer pageNum;

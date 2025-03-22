@@ -8,9 +8,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.op.citybag.demos.exception.AppException;
 import com.op.citybag.demos.mapper.*;
 import com.op.citybag.demos.model.Entity.*;
-import com.op.citybag.demos.model.VO.user.CollectionListVO;
+import com.op.citybag.demos.model.VO.page.list.CollectionListVO;
+import com.op.citybag.demos.model.VO.page.list.UserVisitRecordListVO;
 import com.op.citybag.demos.model.VO.user.CollectionVO;
 import com.op.citybag.demos.model.VO.user.UserVO;
+import com.op.citybag.demos.model.VO.user.UserVisitRecordVO;
 import com.op.citybag.demos.model.common.Common;
 import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.common.RedisKey;
@@ -65,6 +67,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private ScenicSpotMapper scenicSpotMapper;
+
+    @Autowired
+    private UserVisitRecordMapper userVisitRecordMapper;
 
     @Override
     public UserVO queryUserInfo(String userId) {
@@ -136,12 +141,13 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void addCollection(String userId, String entityType, String entityId) {
 
-        // 检查是否已收藏
-        if (userCollectionMapper.exists(new LambdaQueryWrapper<UserCollection>()
+        LambdaQueryWrapper<UserCollection> eq = new LambdaQueryWrapper<UserCollection>()
                 .eq(UserCollection::getUserId, userId)
                 .eq(UserCollection::getEntityType, entityType)
                 .eq(UserCollection::getEntityId, entityId)
-                .eq(UserCollection::getIsDeleted, 0))) {
+                .eq(UserCollection::getIsDeleted, 0);
+        // 检查是否已收藏
+        if (userCollectionMapper.exists(eq)) {
             throw new AppException(GlobalServiceStatusCode.ALREADY_COLLECTED.getMessage(), String.valueOf(GlobalServiceStatusCode.ALREADY_COLLECTED.getCode()));
         }
 
@@ -158,6 +164,7 @@ public class UserServiceImpl implements IUserService {
             lock = redissonService.getLock(lockKey);
             if (lock.tryLock(3, 10, TimeUnit.SECONDS)) {
                 try {
+                    // 有唯一索引 不需要再次判断
                     userCollectionMapper.insert(collection);
                 } catch (Exception e) {
                     throw new AppException(GlobalServiceStatusCode.ALREADY_COLLECTED.getMessage(), String.valueOf(GlobalServiceStatusCode.ALREADY_COLLECTED.getCode()));
@@ -274,6 +281,82 @@ public class UserServiceImpl implements IUserService {
 
         return CollectionListVO.builder()
                 .collectionList(collectionList)
+                .pageNum(pageNum)
+                .pageSize(pageSize)
+                .total(result.getTotal())
+                .build();
+    }
+
+    @Override
+    public UserVisitRecordListVO getUserVisitRecords(String userId, String entityType, Integer pageNum, Integer pageSize) {
+
+        log.info("正在获取用户浏览历史,userId: {},entityType: {},pageNum: {},pageSize: {}", userId, entityType, pageNum, pageSize);
+        Page<UserVisitRecord> page = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<UserVisitRecord> wrapper = new LambdaQueryWrapper<UserVisitRecord>()
+                .eq(UserVisitRecord::getUserId, userId)
+                .eq(UserVisitRecord::getIsDeleted, Common.NOT_DELETE);
+
+        if (entityType != null) {
+            wrapper.eq(UserVisitRecord::getEntityType, entityType);
+        }
+
+        IPage<UserVisitRecord> result = userVisitRecordMapper.selectPage(page, wrapper);
+
+        List<UserVisitRecordVO> visitRecordList = result.getRecords().stream().map(visitRecord -> {
+            UserVisitRecordVO userVisitRecordVO = new UserVisitRecordVO();
+            userVisitRecordVO.setVisiRecordId(visitRecord.getVisitRecordId());
+            userVisitRecordVO.setEntityType(visitRecord.getEntityType());
+            userVisitRecordVO.setEntityId(visitRecord.getEntityId());
+            userVisitRecordVO.setCollectionTime(visitRecord.getCreateTime());
+
+            String entityImg = null;
+            String entityName = null;
+
+
+            // 根据不同类型获取信息
+            switch (visitRecord.getEntityType()) {
+                case Common.CITY: // 城市
+                    QueryWrapper<City> cityQueryWrapper = new QueryWrapper<City>()
+                            .eq(Common.CITY_ID, visitRecord.getEntityId());
+                    City city = cityMapper.selectOne(cityQueryWrapper);
+                    entityImg = ossService.generatePresignedUrl(city.getImageUrl(), 10000000);
+                    entityName = city.getCityName();
+                    break;
+                case Common.SCENIC_SPOT: // 景点
+                    QueryWrapper<ScenicSpot> scenicSpotQueryWrapper = new QueryWrapper<ScenicSpot>()
+                            .eq(Common.SCENIC_SPOT_ID, visitRecord.getEntityId());
+                    ScenicSpot scenicSpot = scenicSpotMapper.selectOne(scenicSpotQueryWrapper);
+                    entityImg = ossService.generatePresignedUrl(scenicSpot.getImageUrl(), 10000000);
+                    entityName = scenicSpot.getScenicSpotName();
+                    break;
+                case Common.FOOD: // 美食
+                    QueryWrapper<Food> foodQueryWrapper = new QueryWrapper<Food>()
+                            .eq(Common.FOOD_ID, visitRecord.getEntityId());
+                    Food food = foodMapper.selectOne(foodQueryWrapper);
+                    entityImg = ossService.generatePresignedUrl(food.getImageUrl(), 10000000);
+                    entityName = food.getFoodName();
+                    break;
+                case Common.DORMITORY: // 住宿
+                    QueryWrapper<Dormitory> dormitoryQueryWrapper = new QueryWrapper<Dormitory>()
+                            .eq(Common.DORMITORY_ID, visitRecord.getEntityId());
+                    Dormitory dormitory = dormitoryMapper.selectOne(dormitoryQueryWrapper);
+                    entityImg = ossService.generatePresignedUrl(dormitory.getImageUrl(), 10000000);
+                    entityName = dormitory.getDormitoryName();
+                    break;
+                default:
+                    break;
+            }
+
+            userVisitRecordVO.setEntityImg(entityImg);
+            userVisitRecordVO.setEntityName(entityName);
+
+            return userVisitRecordVO;
+        }).collect(Collectors.toList());
+
+        log.info("获取用户收藏列表成功,userId: {},entityType: {},pageNum: {},pageSize: {}", userId, entityType, pageNum, pageSize);
+
+        return UserVisitRecordListVO.builder()
+                .visitRecordList(visitRecordList)
                 .pageNum(pageNum)
                 .pageSize(pageSize)
                 .total(result.getTotal())

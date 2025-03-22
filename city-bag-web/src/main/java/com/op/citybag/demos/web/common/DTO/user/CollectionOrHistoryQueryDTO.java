@@ -18,7 +18,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @Builder
 @Validated
-public class CollectionQueryDTO {
+public class CollectionOrHistoryQueryDTO {
 
     /**
      * 用户id
