@@ -9,6 +9,8 @@ import com.op.citybag.demos.web.common.DTO.user.CollectionDTO;
 import com.op.citybag.demos.web.common.DTO.user.CollectionOrHistoryQueryDTO;
 import com.op.citybag.demos.web.common.DTO.user.UserDTO;
 import com.op.citybag.demos.web.common.OPResult;
+import com.op.citybag.demos.web.constraint.LoginVerification;
+import com.op.citybag.demos.web.constraint.SelfPermissionVerification;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 
 
 /**
@@ -40,10 +44,10 @@ public class UserController {
     /**
      * 修改个人信息
      */
-//    @LoginVerification
-//    @SelfPermissionVerification
+    @LoginVerification
+    @SelfPermissionVerification
     @PostMapping("modifyUserInfo")
-    public OPResult modifyUserInfo(@RequestBody UserDTO userDTO) {
+    public OPResult modifyUserInfo(@Valid @RequestBody UserDTO userDTO) {
         try {
             log.info("修改个人信息开始,userId:{}", userDTO.getUserId());
             User user = User.builder()
@@ -69,6 +73,7 @@ public class UserController {
      * @return
      */
     @PostMapping("uploadAvatar")
+//    @LoginVerification
 //    @SelfPermissionVerification
     public OPResult uploadAvatar(
             @RequestPart("file") MultipartFile file,
@@ -97,7 +102,7 @@ public class UserController {
 //    @LoginVerification
 //    @SelfPermissionVerification
     @PostMapping("queryUserInfo")
-    public OPResult queryUserInfo(@RequestBody UserDTO userDTO, HttpServletRequest request) {
+    public OPResult queryUserInfo(@Valid @RequestBody UserDTO userDTO, HttpServletRequest request) {
         try {
             UserVO userInfo = userService.queryUserInfo(userDTO.getUserId());
             log.info("查询个人信息成功,userId:{}", userInfo.getUserId());
@@ -117,7 +122,7 @@ public class UserController {
 //    @SelfPermissionVerification
 //    @LoginVerification
     @PostMapping("collect")
-    public OPResult addCollection(@RequestBody CollectionDTO collectionDTO) {
+    public OPResult addCollection(@Valid @RequestBody CollectionDTO collectionDTO) {
         try {
             userService.addCollection(collectionDTO.getUserId(),
                     collectionDTO.getEntityType(), collectionDTO.getEntityId());
@@ -137,7 +142,7 @@ public class UserController {
     //    @SelfPermissionVerification
 //    @LoginVerification
     @PostMapping("uncollect")
-    public OPResult removeCollection(@RequestBody CollectionDTO collectionDTO) {
+    public OPResult removeCollection(@Valid @RequestBody CollectionDTO collectionDTO) {
         try {
             userService.removeCollection(collectionDTO.getUserId(),
                     collectionDTO.getEntityType(), collectionDTO.getEntityId());
@@ -154,10 +159,10 @@ public class UserController {
      * @param collectionOrHistoryQueryDTO
      * @return
      */
-    //    @SelfPermissionVerification
+//    @SelfPermissionVerification
 //    @LoginVerification
     @PostMapping("collections")
-    public OPResult getCollections(@RequestBody CollectionOrHistoryQueryDTO collectionOrHistoryQueryDTO) {
+    public OPResult getCollections(@Valid @RequestBody CollectionOrHistoryQueryDTO collectionOrHistoryQueryDTO) {
         try {
             log.info("获取收藏列表开始 userId:{}", collectionOrHistoryQueryDTO.getUserId());
 
@@ -175,7 +180,7 @@ public class UserController {
      * @param
      */
     @PostMapping("history")
-    public OPResult getHistory(@RequestBody CollectionOrHistoryQueryDTO collectionOrHistoryQueryDTO) {
+    public OPResult getHistory(@Valid @RequestBody CollectionOrHistoryQueryDTO collectionOrHistoryQueryDTO) {
         try {
             log.info("获取用户浏览历史开始 userId:{}", collectionOrHistoryQueryDTO.getUserId());
 

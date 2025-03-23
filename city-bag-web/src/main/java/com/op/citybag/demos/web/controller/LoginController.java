@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * @Author: 原神
  * @Description:
@@ -51,12 +53,12 @@ public class LoginController {
      *  @return
      */
     @PostMapping("wxlogin")
-    public OPResult wxLogin(@RequestBody WxLoginDTO wxLoginDTO) {
+    public OPResult wxLogin(@Valid @RequestBody WxLoginDTO wxLoginDTO) {
         try {
 
-//            // 微信登陆获取openid和phoneNumber
-//            WxMaJscode2SessionResult session = wxMaService.getUserService().getSessionInfo(wxLoginDTO.getCode());
-//            String openid = session.getOpenid();
+            // 微信登陆获取openid
+            WxMaJscode2SessionResult session = wxMaService.getUserService().getSessionInfo(wxLoginDTO.getCode());
+            String openid = session.getOpenid();
 
 //            WxMaPhoneNumberInfo numberInfo = wxMaService.getUserService().getNewPhoneNoInfo(wxLoginDTO.getPhoneCode());
 //            String phoneNumber = numberInfo.getPhoneNumber();
@@ -64,8 +66,8 @@ public class LoginController {
 
 //            String unionId = session.getUnionid(); // 需配置开放平台
 
-//            // 测试用
-          String openid = wxLoginDTO.getCode();
+           // 测试用
+//          String openid = wxLoginDTO.getCode();
 
             log.info("微信登陆开始,openid:{}", openid);
 
@@ -84,7 +86,7 @@ public class LoginController {
      * @param stuLoginDTO
      */
     @PostMapping("stulogin")
-    public OPResult stuLogin(@RequestBody StuLoginDTO stuLoginDTO) {
+    public OPResult stuLogin(@Valid @RequestBody StuLoginDTO stuLoginDTO) {
         try {
 
             log.info("学号登陆开始,stuId:{}", stuLoginDTO.getStuId());
@@ -129,7 +131,7 @@ public class LoginController {
     @PostMapping("logout")
 //    @LoginVerification
 //    @SelfPermissionVerification
-    public OPResult logout(@RequestBody UserDTO userDTO) {
+    public OPResult logout(@Valid @RequestBody UserDTO userDTO) {
         try {
             log.info("退出登陆开始,userId:{}", userDTO.getUserId());
             loginService.logout(userDTO.getUserId());
@@ -150,7 +152,7 @@ public class LoginController {
 //    @LoginVerification
 //    @SelfPermissionVerification
     @PostMapping("changePassword")
-    public OPResult changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+    public OPResult changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
         try {
             log.info("更改密码开始,stuId:{}", changePasswordDTO.getStuId());
 

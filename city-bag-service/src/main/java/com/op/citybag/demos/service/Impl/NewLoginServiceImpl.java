@@ -318,8 +318,7 @@ public class NewLoginServiceImpl implements INewLoginService {
 
         try {
             redissonService.getActiveZSetMembers(RedisKey.USER_TO_TOKEN + userId).forEach(token -> {
-                redissonService.remove(RedisKey.ACCESS_TOKEN + token);
-                redissonService.remove(RedisKey.REFRESH_TOKEN + token);
+                redissonService.remove(token);
             });
 
             redissonService.remove(RedisKey.USER_TO_TOKEN + userId);
@@ -335,7 +334,12 @@ public class NewLoginServiceImpl implements INewLoginService {
 
         try{
         redissonService.getActiveZSetMembers(RedisKey.USER_TO_TOKEN + userId).forEach(token -> {
-            redissonService.remove(RedisKey.ACCESS_TOKEN + token);
+            // 分割出token前缀 判断是否为accesstoken
+            String tokenPrefix = token.substring(0, token.lastIndexOf(":"));
+            if (RedisKey.ACCESS_TOKEN.equals(tokenPrefix)) {
+                // 清除AT
+                redissonService.remove(token);
+            }
             // 删除ZSet中的token记录
             redissonService.removeFromZSet(RedisKey.USER_TO_TOKEN + userId , RedisKey.ACCESS_TOKEN + token);
         });} catch (RedisException e) {

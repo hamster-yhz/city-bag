@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * @Author: 原神
  * @Description: 城市控制器
@@ -44,7 +46,7 @@ public class CityController {
      * @return 城市信息
      */
     @PostMapping("/querysinglecity")
-    public OPResult querySingleCity(@RequestBody QuerySingleCityDTO querySingleCityDTO) {
+    public OPResult querySingleCity(@Valid @RequestBody QuerySingleCityDTO querySingleCityDTO) {
         try {
             log.info("查询单个城市信息开始");
 
@@ -65,7 +67,7 @@ public class CityController {
      * @return 城市信息
      */
     @PostMapping("/queryCityLike")
-    public OPResult queryCityLike(@RequestBody QueryCityLikeDTO queryCityLikeDTO) {
+    public OPResult queryCityLike(@Valid @RequestBody QueryCityLikeDTO queryCityLikeDTO) {
         try {
             log.info("查询城市信息开始");
 
@@ -91,7 +93,7 @@ public class CityController {
      * @return
      */
     @PostMapping("/querycityscenicspot")
-    public OPResult queryCityScenicSpot(@RequestBody QueryCityContentDTO queryCityContentDTO) {
+    public OPResult queryCityScenicSpot(@Valid @RequestBody QueryCityContentDTO queryCityContentDTO) {
         try {
             log.info("查询城市对应的景点开始");
 
@@ -112,7 +114,7 @@ public class CityController {
      * @return
      */
     @PostMapping("/querycityfood")
-    public OPResult queryCityFood(@RequestBody QueryCityContentDTO queryCityContentDTO) {
+    public OPResult queryCityFood(@Valid @RequestBody QueryCityContentDTO queryCityContentDTO) {
         try {
             log.info("查询城市对应的美食开始");
 
@@ -134,7 +136,7 @@ public class CityController {
      * @return
      */
     @PostMapping("/querycitydormitory")
-    public OPResult queryCityDormitory(@RequestBody QueryCityContentDTO queryCityContentDTO) {
+    public OPResult queryCityDormitory(@Valid @RequestBody QueryCityContentDTO queryCityContentDTO) {
         try {
             log.info("查询城市对应的住宿开始");
 
@@ -155,7 +157,7 @@ public class CityController {
      * @return
      **/
     @PostMapping("/querysinglescenicspot")
-    public OPResult querySingleScenicSpot(@RequestBody QuerySingleScenicSpotDTO querySingleScenicSpotDTO) {
+    public OPResult querySingleScenicSpot(@Valid @RequestBody QuerySingleScenicSpotDTO querySingleScenicSpotDTO) {
         try {
             log.info("查询单个景点信息开始");
             ScenicSpotVO scenicSpotVO = cityService.querySingleScenicSpot(querySingleScenicSpotDTO.getScenicSpotId(), querySingleScenicSpotDTO.getUserId());
@@ -174,7 +176,7 @@ public class CityController {
      * @return
      **/
     @PostMapping("/querysinglefood")
-    public OPResult querySingleFood(@RequestBody QuerySingleFoodDTO querySingleFoodDTO) {
+    public OPResult querySingleFood(@Valid @RequestBody QuerySingleFoodDTO querySingleFoodDTO) {
         try {
             log.info("查询单个美食信息开始");
             FoodVO foodVO = cityService.querySingleFood(querySingleFoodDTO.getFoodId(), querySingleFoodDTO.getUserId());
@@ -193,7 +195,7 @@ public class CityController {
      * @return
      */
     @PostMapping("/querysingledormitory")
-    public OPResult querySingleDormitory(@RequestBody QuerySingleDormitoryDTO querySingleDormitoryDTO) {
+    public OPResult querySingleDormitory(@Valid @RequestBody QuerySingleDormitoryDTO querySingleDormitoryDTO) {
         try {
             log.info("查询单个住宿信息开始");
             DormitoryVO dormitoryVO = cityService.querySingleDormitory(querySingleDormitoryDTO.getDormitoryId(), querySingleDormitoryDTO.getUserId());

@@ -20,7 +20,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Validated
 public class QueryCityContentDTO {
 
     /**

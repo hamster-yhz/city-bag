@@ -106,6 +106,7 @@ public class UserServiceImpl implements IUserService {
         int rowsAffected = userMapper.update(user, wrapper);
         if (rowsAffected > 0) {
             log.info("用户信息,修改成功,受影响的行数:{},userId: {}", rowsAffected, user.getUserId());
+            redissonService.remove(RedisKey.USER_INFO + user.getUserId());
         } else {
             log.info("用户信息,修改失败,未找到匹配的用户或更新操作未执行,userId: {}", user.getUserId());
             throw new AppException(String.valueOf(GlobalServiceStatusCode.USER_UPDATE_ERROR.getCode()), GlobalServiceStatusCode.USER_UPDATE_ERROR.getMessage());
@@ -132,6 +133,7 @@ public class UserServiceImpl implements IUserService {
         int rowsAffected = userMapper.update(user, wrapper);
         if (rowsAffected > 0) {
             log.info("用户头像修改成功,受影响的行数:{},userId: {}", rowsAffected, user.getUserId());
+            redissonService.remove(RedisKey.USER_INFO + userId);
         } else {
             log.info("用户头像修改失败,未找到匹配的用户或更新操作未执行,userId: {}", user.getUserId());
             throw new AppException(String.valueOf(GlobalServiceStatusCode.USER_UPDATE_ERROR.getCode()), GlobalServiceStatusCode.USER_UPDATE_ERROR.getMessage());
@@ -294,7 +296,8 @@ public class UserServiceImpl implements IUserService {
         Page<UserVisitRecord> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<UserVisitRecord> wrapper = new LambdaQueryWrapper<UserVisitRecord>()
                 .eq(UserVisitRecord::getUserId, userId)
-                .eq(UserVisitRecord::getIsDeleted, Common.NOT_DELETE);
+                .eq(UserVisitRecord::getIsDeleted, Common.NOT_DELETE)
+                .orderByDesc(UserVisitRecord::getCreateTime);
 
         if (entityType != null) {
             wrapper.eq(UserVisitRecord::getEntityType, entityType);
@@ -307,7 +310,7 @@ public class UserServiceImpl implements IUserService {
             userVisitRecordVO.setVisiRecordId(visitRecord.getVisitRecordId());
             userVisitRecordVO.setEntityType(visitRecord.getEntityType());
             userVisitRecordVO.setEntityId(visitRecord.getEntityId());
-            userVisitRecordVO.setCollectionTime(visitRecord.getCreateTime());
+            userVisitRecordVO.setVisitTime(visitRecord.getUpdateTime());
 
             String entityImg = null;
             String entityName = null;

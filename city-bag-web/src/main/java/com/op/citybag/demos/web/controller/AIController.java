@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ public class AIController {
      * @return
      */
     @PostMapping("chat")
-    public OPResult chat(@RequestBody AIDTO AIDTO) {
+    public OPResult chat(@Valid @RequestBody AIDTO AIDTO) {
         try {
             String answer = chatClient.prompt()
                     .user(AIDTO.getInput() + " 请用200字内的简洁回答")
@@ -83,7 +84,7 @@ public class AIController {
      * @return
      */
     @PostMapping("streamChat")
-    public SseEmitter streamChat(@RequestBody AIDTO AIDTO) {
+    public SseEmitter streamChat(@Valid @RequestBody AIDTO AIDTO) {
 
         SseEmitter emitter = new SseEmitter(30_000L); // 30秒超时
 
@@ -115,7 +116,7 @@ public class AIController {
      * @return
      */
     @PostMapping("local-knowledge")
-    public OPResult localKnowledgeChat(@RequestBody AIDTO AIDTO) {
+    public OPResult localKnowledgeChat(@Valid @RequestBody AIDTO AIDTO) {
         try {
             // 1. 从问题中提取关键信息
             String entities = extractEntities(AIDTO.getInput());
@@ -172,7 +173,7 @@ public class AIController {
         String cityId = cityListVO.getCityList().get(0).getCityId();
 
         // 1. 获取城市基础信息
-        CityVO city = cityService.querySingleCity(cityId);
+        CityVO city = cityService.querySingleCity(null ,cityId);
         if (city != null) {
             context.append("【城市概况】\n")
                     .append("城市名称：").append(city.getCityName()).append("\n")
@@ -180,7 +181,7 @@ public class AIController {
         }
 
         // 2. 获取美食数据
-        FoodListVO foodListVO = cityService.queryCityFood(cityId, 1, 10);
+        FoodListVO foodListVO = cityService.queryCityFood(null ,cityId, 1, 10);
         if (!foodListVO.getFoodList().isEmpty()) {
             context.append("【特色美食】\n");
             foodListVO.getFoodList().forEach(food -> context
@@ -189,7 +190,7 @@ public class AIController {
         }
 
         // 3. 获取景点数据
-        ScenicSpotListVO scenicSpotListVO = cityService.queryCityScenicSpot(cityId, 1, 10);
+        ScenicSpotListVO scenicSpotListVO = cityService.queryCityScenicSpot(null ,cityId, 1, 10);
         if (!scenicSpotListVO.getScenicSpotList().isEmpty()) {
             context.append("【推荐景点】\n");
             scenicSpotListVO.getScenicSpotList().forEach(spot -> context
@@ -200,7 +201,7 @@ public class AIController {
         }
 
         // 4. 获取住宿数据
-        DormitoryListVO dormitoryListVO = cityService.queryCityDormitory(cityId, 1, 10);
+        DormitoryListVO dormitoryListVO = cityService.queryCityDormitory(null ,cityId, 1, 10);
         if (!dormitoryListVO.getDormitoryList().isEmpty()) {
             context.append("\n【住宿推荐】\n");
             dormitoryListVO.getDormitoryList().forEach(dorm -> context

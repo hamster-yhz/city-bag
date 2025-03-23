@@ -47,5 +47,5 @@ public class UserVisitRecordVO {
     /**
      * 浏览时间
      */
-    private LocalDateTime collectionTime;
+    private LocalDateTime visitTime;
 }

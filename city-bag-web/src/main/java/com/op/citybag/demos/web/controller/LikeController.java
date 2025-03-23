@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * @Author: 原神
  * @Description:
@@ -35,7 +37,7 @@ public class LikeController {
      * @return
      */
     @PostMapping("/toggle")
-    public OPResult toggleLike(@RequestBody LikeRequestDTO likeRequestDTO) {
+    public OPResult toggleLike(@Valid @RequestBody LikeRequestDTO likeRequestDTO) {
 
         try {
             log.info("操作 {} 开始,用户:{},实体:{},类型:{}",likeRequestDTO.getAction(), likeRequestDTO.getUserId(), likeRequestDTO.getEntityId(), likeRequestDTO.getEntityType());

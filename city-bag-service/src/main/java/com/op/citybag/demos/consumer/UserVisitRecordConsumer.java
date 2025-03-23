@@ -52,7 +52,7 @@ public class UserVisitRecordConsumer {
                 .eq(UserVisitRecord::getEntityId, entityId)
                 .eq(UserVisitRecord::getIsDeleted, 0);
         UserVisitRecord userVisitRecord = userVisitRecordMapper.selectOne(queryWrapper);
-        if (userVisitRecord == null) {
+        if (userVisitRecord != null) {
             // 已记录,更新时间
             userVisitRecordMapper.update(record, queryWrapper);
             return;
@@ -67,7 +67,7 @@ public class UserVisitRecordConsumer {
             if (lock.tryLock(3, 10, TimeUnit.SECONDS)) {
                 try {
                     userVisitRecord = userVisitRecordMapper.selectOne(queryWrapper);
-                    if (userVisitRecord == null) {
+                    if (userVisitRecord != null) {
                         // 已记录,更新时间
                         userVisitRecordMapper.update(record, queryWrapper);
                         return;
