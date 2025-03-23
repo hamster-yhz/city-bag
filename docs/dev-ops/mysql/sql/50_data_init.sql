@@ -1,6 +1,3 @@
-use city_bag;
-
-
 -- 用户表示例数据
 INSERT INTO `user` (id, user_id, user_name, image_url, auth_key, auth_secret, auth_type, gender, birthday,
                     personalized_signature, jurisdiction, like_count, create_time, update_time, is_deleted)
@@ -91,6 +88,18 @@ VALUES (NULL, -- 自动生成的主键
         '巴音布鲁克是新疆维吾尔自治区的一个著名景点，以其九曲十八弯的草原风光和天鹅湖闻名。', -- 城市介绍
         '巴音布鲁克手抓肉、巴音布鲁克烤肉串、巴音布鲁克奶茶是巴音布鲁克特色美食。', -- 美食介绍
         '巴音布鲁克草原、天鹅湖、草原石人是巴音布鲁克的代表性景点。', -- 景点介绍
+        'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0', -- 图片地址
+        100, -- 点赞数量
+        CURRENT_TIMESTAMP, -- 创建时间
+        CURRENT_TIMESTAMP, -- 更新时间
+        0 -- 未删除
+       ),
+       (NULL, -- 自动生成的主键
+        UUID(), -- 城市id
+        '科尔沁', -- 城市名称
+        '科尔沁是内蒙古自治区的一个旗县，拥有丰富的自然景观和文化遗产，是旅游的好去处。', -- 城市介绍
+        '科尔沁烤全羊、科尔沁奶酪、科尔沁手抓肉是科尔沁特色美食。', -- 美食介绍
+        '科尔沁大草原、科尔沁博物馆、科尔沁温泉是科尔沁的代表性景点。', -- 景点介绍
         'd5e87bc8-49ae-4ea7-a5e6-78d31f96f528_0', -- 图片地址
         100, -- 点赞数量
         CURRENT_TIMESTAMP, -- 创建时间

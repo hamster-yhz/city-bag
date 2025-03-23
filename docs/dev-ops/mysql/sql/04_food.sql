@@ -1,5 +1,3 @@
-use city_bag;
-
 DROP TABLE IF EXISTS `food`;
 CREATE TABLE IF NOT EXISTS `food`
 (

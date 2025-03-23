@@ -1,5 +1,3 @@
-use city_bag;
-
 DROP TABLE IF EXISTS `scenic_spot`;
 CREATE TABLE IF NOT EXISTS `scenic_spot`
 (

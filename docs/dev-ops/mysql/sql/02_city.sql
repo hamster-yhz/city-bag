@@ -1,5 +1,3 @@
-use city_bag;
-
 DROP TABLE IF EXISTS `city`;
 CREATE TABLE IF NOT EXISTS `city` (
     -- 主键

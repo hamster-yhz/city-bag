@@ -1,5 +1,3 @@
-use city_bag;
-
 DROP TABLE IF EXISTS `user_collection`;
 CREATE TABLE IF NOT EXISTS `user_collection`
 (
