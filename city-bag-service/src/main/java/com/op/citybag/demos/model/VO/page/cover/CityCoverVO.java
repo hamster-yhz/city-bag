@@ -5,7 +5,7 @@ import lombok.*;
 /**
  * @Author: 原神
  * @Description:
- * @Date: 2025/3/2 21:14
+ * @Date: 2025/3/23 21:09
  * @Version: 1.0
  */
 @Getter
@@ -14,11 +14,12 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class CityCoverVO{
+public class CityCoverVO {
 
     private String cityId;
 
     private String cityName;
 
-    //private String cityImg;
+    private String cityImg;
+
 }

@@ -28,6 +28,8 @@ public class DormitoryVO {
 
     private String price;
 
+    private String address;
+
     private String phone;
 
     private List<String> photoUrl;

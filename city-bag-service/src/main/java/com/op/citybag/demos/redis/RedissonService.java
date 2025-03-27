@@ -311,5 +311,18 @@ public class RedissonService implements IRedisService {
         return getActiveZSetMembers(key).size(); // 复用现有清理逻辑
     }
 
+    // 添加在 remove(String key) 方法之后
+
+    @Override
+    public void removeMap(String key) {
+        redissonClient.getMap(key).delete();
+    }
+
+    @Override
+    public void removeZSet(String key) {
+        redissonClient.getScoredSortedSet(key).delete();
+    }
+
+
 
 }

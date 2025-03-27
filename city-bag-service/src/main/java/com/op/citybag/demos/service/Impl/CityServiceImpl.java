@@ -5,13 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.op.citybag.demos.Pexels.PexelsClientServiceImpl;
 import com.op.citybag.demos.exception.AppException;
 import com.op.citybag.demos.mapper.*;
 import com.op.citybag.demos.model.Entity.*;
-import com.op.citybag.demos.model.VO.page.cover.CityCoverVO;
-import com.op.citybag.demos.model.VO.page.cover.DormitoryCoverVO;
-import com.op.citybag.demos.model.VO.page.cover.FoodCoverVO;
-import com.op.citybag.demos.model.VO.page.cover.ScenicSpotCoverVO;
+import com.op.citybag.demos.model.VO.page.cover.*;
 import com.op.citybag.demos.model.VO.page.list.CityListVO;
 import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
 import com.op.citybag.demos.model.VO.page.list.FoodListVO;
@@ -72,6 +70,10 @@ public class CityServiceImpl implements ICityService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private PexelsClientServiceImpl pexelsClientServiceImpl;
+
+
     @Override
     public CityVO querySingleCity(String userId, String cityId) {
 
@@ -100,7 +102,10 @@ public class CityServiceImpl implements ICityService {
         cityVO = Entity2VO.City2CityVO(city);
 
         // 设置封面图片
-        cityVO.setCityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(),  Common.QUERY_COVER_TIME));
+        cityVO.setCityImg(
+                //ossDemoService.generatePresignedUrl(city.getImageUrl(),  Common.QUERY_COVER_TIME)
+                pexelsClientServiceImpl.searchOnePhoto(city.getCityName())
+        );
 
         // 设置收藏状态
         cityVO.setIsCollect(queryCollection(userId, Common.CITY, cityVO.getCityId()));
@@ -120,11 +125,15 @@ public class CityServiceImpl implements ICityService {
         IPage<City> cityPage = cityMapper.selectPage(page,
                 new QueryWrapper<City>().like(Common.CITY_NAME, cityName));
 
-        List<CityCoverVO> coverList = cityPage.getRecords().stream()
-                .map(city -> CityCoverVO.builder()
+        List<CityNameVO> coverList = cityPage.getRecords().stream()
+                .map(city -> CityNameVO.builder()
                         .cityId(city.getCityId())
                         .cityName(city.getCityName())
 //                        .cityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(), Common.QUERY_COVER_TIME))
+                       .cityImg(
+                               //ossDemoService.generatePresignedUrl(city.getImageUrl(), Common.QUERY_COVER_TIME)
+                               pexelsClientServiceImpl.searchOnePhoto(city.getCityName())
+                       )
                         .build())
                 .collect(Collectors.toList());
 
@@ -154,7 +163,10 @@ public class CityServiceImpl implements ICityService {
                 .map(spot -> ScenicSpotCoverVO.builder()
                         .scenicSpotId(spot.getScenicSpotId())
                         .scenicSpotName(spot.getScenicSpotName())
-                        .scenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME))
+                        .scenicSpotImg(
+                                //ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME)
+                                pexelsClientServiceImpl.searchOnePhoto(spot.getScenicSpotName())
+                        )
                         .visitTime(spot.getVisitTime())
                         .address(spot.getAddress())
                         .IsCollect(queryCollection(userId, Common.SCENIC_SPOT, spot.getScenicSpotId()))
@@ -184,7 +196,10 @@ public class CityServiceImpl implements ICityService {
                         .foodId(food.getFoodId())
                         .foodName(food.getFoodName())
                         .IsCollect(queryCollection(userId, Common.FOOD, food.getFoodId()))
-                        .foodImg(ossDemoService.generatePresignedUrl(food.getImageUrl(),  Common.QUERY_COVER_TIME))
+                        .foodImg(
+                                //ossDemoService.generatePresignedUrl(food.getImageUrl(),  Common.QUERY_COVER_TIME)
+                                pexelsClientServiceImpl.searchOnePhoto(food.getFoodName())
+                                 )
                         .build())
                 .collect(Collectors.toList());
 
@@ -211,7 +226,10 @@ public class CityServiceImpl implements ICityService {
                         .dormitoryId(dorm.getDormitoryId())
                         .dormitoryName(dorm.getDormitoryName())
                         .IsCollect(queryCollection(userId, Common.DORMITORY, dorm.getDormitoryId()))
-                        .dormitoryImg(ossDemoService.generatePresignedUrl(dorm.getImageUrl(),  Common.QUERY_COVER_TIME))
+                        .dormitoryImg(
+                                //ossDemoService.generatePresignedUrl(dorm.getImageUrl(),  Common.QUERY_COVER_TIME)
+                                pexelsClientServiceImpl.searchOnePhoto(dorm.getDormitoryName())
+                                )
                         .build())
                 .collect(Collectors.toList());
 
@@ -251,7 +269,10 @@ public class CityServiceImpl implements ICityService {
         dormitoryVO = Entity2VO.Dormitory2DormitoryVO(dormitory);
 
         // 封面图
-        dormitoryVO.setDormitoryImg(ossDemoService.generatePresignedUrl(dormitory.getImageUrl(),  Common.QUERY_COVER_TIME));
+        dormitoryVO.setDormitoryImg(
+                //ossDemoService.generatePresignedUrl(dormitory.getImageUrl(),  Common.QUERY_COVER_TIME)
+                pexelsClientServiceImpl.searchOnePhoto(dormitory.getDormitoryName())
+                );
 
         // 相册图
         List<String> photoUrls = SplitUtil.splitBySlash(dormitory.getPhotoUrl()).stream()
@@ -299,7 +320,10 @@ public class CityServiceImpl implements ICityService {
         scenicSpotVO = Entity2VO.ScenicSpot2ScenicSpotVO(spot);
 
         // 封面图
-        scenicSpotVO.setScenicSpotImg(ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME));
+        scenicSpotVO.setScenicSpotImg(
+                //ossDemoService.generatePresignedUrl(spot.getImageUrl(),  Common.QUERY_COVER_TIME)
+                pexelsClientServiceImpl.searchOnePhoto(spot.getScenicSpotName())
+        );
 
         // 相册图
         List<String> photoUrls = SplitUtil.splitBySlash(spot.getPhotoUrl()).stream()
@@ -349,7 +373,10 @@ public class CityServiceImpl implements ICityService {
         foodVO = Entity2VO.Food2FoodVO(food);
 
         // 封面图
-        foodVO.setFoodImg(ossDemoService.generatePresignedUrl(food.getImageUrl(),  Common.QUERY_COVER_TIME));
+        foodVO.setFoodImg(
+                //ossDemoService.generatePresignedUrl(food.getImageUrl(),  Common.QUERY_COVER_TIME)
+                pexelsClientServiceImpl.searchOnePhoto(food.getFoodName())
+        );
 
         // 相册图
         List<String> photoUrls = SplitUtil.splitBySlash(food.getPhotoUrl()).stream()
@@ -371,6 +398,46 @@ public class CityServiceImpl implements ICityService {
         redissonService.setValue(cacheKey, foodVO, Common.REDIS_EXPIRE_TIME_30_MINUTES);
 
         return foodVO;
+    }
+
+
+    @Override
+    public List<CityCoverVO> getTopCitiesByLikes() {
+        // 查询点赞量最高的前五个城市
+        List<City> topCities = cityMapper.selectList(
+                new QueryWrapper<City>()
+                        .orderByDesc(Common.LIKE_COUNT)
+                        .last("LIMIT 5")
+        );
+
+        // 转换为CityCoverVO列表
+        return topCities.stream()
+                .map(city -> CityCoverVO.builder()
+                        .cityId(city.getCityId())
+                        .cityName(city.getCityName())
+                        .cityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(), Common.QUERY_COVER_TIME))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<CityCoverVO> acquiringFixedCity() {
+
+        // 查询固定的五个城市
+        List<City> topCities = cityMapper.selectList(
+                new QueryWrapper<City>()
+                        .in(Common.CITY_NAME, Common.CITY_NAME_LIST)
+        );
+
+        // 转换为CityCoverVO列表
+        return topCities.stream()
+                .map(city -> CityCoverVO.builder()
+                        .cityId(city.getCityId())
+                        .cityName(city.getCityName())
+                        .cityImg(ossDemoService.generatePresignedUrl(city.getImageUrl(), Common.QUERY_COVER_TIME))
+                        .build())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -414,4 +481,8 @@ public class CityServiceImpl implements ICityService {
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_VISIT_QUEUE, record);
     }
 
+    @Override
+    public String searchPhotos(String query) {
+        return pexelsClientServiceImpl.searchOnePhoto(query);
+    }
 }

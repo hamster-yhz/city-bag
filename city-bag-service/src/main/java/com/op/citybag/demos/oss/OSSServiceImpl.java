@@ -39,6 +39,14 @@ public class OSSServiceImpl implements OSSService {
 
     @Override
     public String generatePresignedUrl(String objectKey, int expireSeconds) {
+
+        // 自动补全扩展名逻辑
+//        String fullKey = objectKey.endsWith(".png") ? objectKey : objectKey + ".png";
+
+        if(objectKey == null || objectKey.isEmpty()){
+            return null;
+        }
+
         return ossClient.generatePresignedUrl(
                 ossConfigProperties.getBucketName(),
                 objectKey,

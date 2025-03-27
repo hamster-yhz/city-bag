@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS `food`
     `open_time`   VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '开放时间',
     -- 人均价格
     `price`       VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '人均价格',
+    -- 美食地址
+    `address`          VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '美食地址',
     -- 联系电话
     `phone`       VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '联系电话',
     -- 著名美食列表

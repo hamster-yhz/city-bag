@@ -1,7 +1,6 @@
 package com.op.citybag.demos.model.VO.page.list;
 
-import com.op.citybag.demos.model.VO.page.cover.CityCoverVO;
-import com.op.citybag.demos.model.VO.page.cover.DormitoryCoverVO;
+import com.op.citybag.demos.model.VO.page.cover.CityNameVO;
 import lombok.*;
 
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.List;
 public class CityListVO {
 
     // 城市列表
-    private List<CityCoverVO> cityList;
+    private List<CityNameVO> cityList;
 
     // 分页信息
     private Integer pageNum;

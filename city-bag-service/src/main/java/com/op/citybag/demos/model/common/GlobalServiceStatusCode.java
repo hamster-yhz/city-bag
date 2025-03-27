@@ -41,6 +41,7 @@ public enum GlobalServiceStatusCode {
     USER_ACCOUNT_USE_BY_OTHERS(2009, "账号下线"),
     USER_ACCOUNT_REGISTER_ERROR(2010, "账号注册错误"),
     USER_UPDATE_ERROR(2011, "用户信息修改失败"),
+    USER_NOT_EXIST(2012, "用户不存在"),
 
     USER_TYPE_EXCEPTION(2101, "用户类别异常"),
 
@@ -59,6 +60,9 @@ public enum GlobalServiceStatusCode {
     ALREADY_LIKED(3004, "已点赞"),
     ALREADY_FOLLOWED(3005, "已关注"),
     ALREADY_FOLLOWED_OTHER(3006, "已被关注"),
+
+    /* 业务错误 4001-5000 */
+    PEXELS_API_ERROR(4001, " pexels api 错误"),
 
     /* 登录模块错误 6001-7000*/
     LOGIN_CODE_EXIT(6001, "需要等待一段时间后才能再次尝试"),

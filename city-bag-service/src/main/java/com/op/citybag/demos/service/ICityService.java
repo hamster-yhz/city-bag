@@ -1,5 +1,7 @@
 package com.op.citybag.demos.service;
 
+import com.op.citybag.demos.model.Entity.PexelsSearchResponse;
+import com.op.citybag.demos.model.VO.page.cover.CityCoverVO;
 import com.op.citybag.demos.model.VO.page.list.CityListVO;
 import com.op.citybag.demos.model.VO.page.list.DormitoryListVO;
 import com.op.citybag.demos.model.VO.page.list.FoodListVO;
@@ -8,6 +10,8 @@ import com.op.citybag.demos.model.VO.page.object.CityVO;
 import com.op.citybag.demos.model.VO.page.object.DormitoryVO;
 import com.op.citybag.demos.model.VO.page.object.FoodVO;
 import com.op.citybag.demos.model.VO.page.object.ScenicSpotVO;
+
+import java.util.List;
 
 public interface ICityService {
 
@@ -84,4 +88,20 @@ public interface ICityService {
      */
     DormitoryVO querySingleDormitory(String dormitoryId, String userId);
 
+    /**
+     * 获取点赞量最高的前五个城市
+     *
+     * @return 城市信息列表
+     */
+    List<CityCoverVO> getTopCitiesByLikes();
+
+    /**
+     * 获取固定城市
+     *
+     * @return
+     */
+    List<CityCoverVO> acquiringFixedCity();
+
+
+    String searchPhotos(String query);
 }

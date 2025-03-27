@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS `dormitory`
     `type`           TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '住宿类型，0-未选择；1-酒店；2-民宿',
     -- 人均价格
     `price`          VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '人均价格',
+    -- 住宿地址
+    `address`          VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '住宿地址',
     -- 联系电话
     `phone`          VARCHAR(128)     NOT NULL DEFAULT '' COMMENT '联系电话',
     -- 实地图片 通过/间隔

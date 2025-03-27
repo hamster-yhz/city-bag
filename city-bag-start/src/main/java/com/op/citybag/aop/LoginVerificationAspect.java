@@ -6,7 +6,7 @@ import com.op.citybag.demos.model.common.GlobalServiceStatusCode;
 import com.op.citybag.demos.model.common.RedisKey;
 import com.op.citybag.demos.redis.RedissonService;
 import com.op.citybag.demos.utils.TokenUtil;
-import com.op.citybag.demos.web.exception.AppException;
+import com.op.citybag.demos.exception.AppException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -45,7 +45,7 @@ public class LoginVerificationAspect {
     /**
      * 拦截入口
      */
-    @Pointcut("@annotation(com.op.citybag.demos.web.constraint.LoginVerification)")
+    @Pointcut("@annotation(com.op.citybag.demos.constraint.LoginVerification)")
     public void pointCut() {
     }
 

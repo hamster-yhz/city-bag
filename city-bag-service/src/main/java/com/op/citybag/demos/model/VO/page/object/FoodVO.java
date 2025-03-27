@@ -30,6 +30,8 @@ public class FoodVO {
 
     private String price;
 
+    private String address;
+
     private String phone;
 
     private String foodList;

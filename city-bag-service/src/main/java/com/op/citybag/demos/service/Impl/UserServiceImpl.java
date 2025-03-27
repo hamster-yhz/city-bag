@@ -2,9 +2,9 @@ package com.op.citybag.demos.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.op.citybag.demos.Pexels.PexelsClientServiceImpl;
 import com.op.citybag.demos.exception.AppException;
 import com.op.citybag.demos.mapper.*;
 import com.op.citybag.demos.model.Entity.*;
@@ -71,6 +71,9 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private UserVisitRecordMapper userVisitRecordMapper;
 
+    @Autowired
+    private PexelsClientServiceImpl pexelsClientServiceImpl;
+
     @Override
     public UserVO queryUserInfo(String userId) {
         log.info("尝试从redis中获取用户信息,userId: {}", userId);
@@ -78,6 +81,8 @@ public class UserServiceImpl implements IUserService {
         if (userInfo != null) {
             return userInfo;
         }
+
+        checkUserExist(userId);
 
         log.info("从数据库中查询用户信息,userId: {}", userId);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
@@ -98,6 +103,8 @@ public class UserServiceImpl implements IUserService {
     @Transactional(rollbackFor = Exception.class)
     public void modifyUserInfo(User user) {
 
+        checkUserExist(user.getUserId());
+
         log.info("正在修改用户信息,userId: {}", user.getUserId());
 
         QueryWrapper<User> wrapper = new QueryWrapper<>();
@@ -117,6 +124,9 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void updateUserAvatar(String userId, MultipartFile file) {
+
+        checkUserExist(userId);
+
         String avatarUrl = null;
 
         if (file != null) {
@@ -142,6 +152,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void addCollection(String userId, String entityType, String entityId) {
+
+        checkUserExist(userId);
 
         LambdaQueryWrapper<UserCollection> eq = new LambdaQueryWrapper<UserCollection>()
                 .eq(UserCollection::getUserId, userId)
@@ -181,6 +193,8 @@ public class UserServiceImpl implements IUserService {
         } finally {
             redissonService.unLock(lock);
         }
+
+        redissonService.remove(RedisKey.CITY_BAG_CACHE + entityType + RedisKey.INFO + userId);
         log.info("收藏成功,userId: {},entityType: {},entityId: {}", userId, entityType, entityId);
     }
 
@@ -197,24 +211,30 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void removeCollection(String userId, String entityType, String entityId) {
 
+        checkUserExist(userId);
+
         log.info("正在取消收藏,userId: {},entityType: {},entityId: {}", userId, entityType, entityId);
 
         try {
-            userCollectionMapper.delete(new LambdaUpdateWrapper<UserCollection>()
-                    .eq(UserCollection::getUserId, userId)
-                    .eq(UserCollection::getEntityType, entityType)
-                    .eq(UserCollection::getEntityId, entityId)
-                    .set(UserCollection::getIsDeleted, 1));
+            int affectedRows = userCollectionMapper.physicalDelete(userId, entityType, entityId);
+            if (affectedRows == 0) {
+                throw new AppException("记录不存在或已被删除", "404");
+            }
+
         } catch (Exception e) {
             log.error("取消收藏失败,userId: {},entityType: {},entityId: {}", userId, entityType, entityId);
             throw new AppException(GlobalServiceStatusCode.SYSTEM_SERVICE_ERROR.getMessage(), String.valueOf(GlobalServiceStatusCode.SYSTEM_SERVICE_ERROR.getCode()));
         }
+
+        redissonService.remove(RedisKey.CITY_BAG_CACHE + entityType + RedisKey.INFO + userId);
 
         log.info("取消收藏成功,userId: {},entityType: {},entityId: {}", userId, entityType, entityId);
     }
 
     @Override
     public CollectionListVO getCollections(String userId, String entityType, Integer pageNum, Integer pageSize) {
+
+        checkUserExist(userId);
 
         log.info("正在获取用户收藏列表,userId: {},entityType: {},pageNum: {},pageSize: {}", userId, entityType, pageNum, pageSize);
         Page<UserCollection> page = new Page<>(pageNum, pageSize);
@@ -273,7 +293,7 @@ public class UserServiceImpl implements IUserService {
                     break;
             }
 
-            collectionVO.setEntityImg(entityImg);
+            collectionVO.setEntityImg(pexelsClientServiceImpl.searchOnePhoto(entityName));
             collectionVO.setEntityName(entityName);
 
             return collectionVO;
@@ -291,6 +311,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserVisitRecordListVO getUserVisitRecords(String userId, String entityType, Integer pageNum, Integer pageSize) {
+
+        checkUserExist(userId);
 
         log.info("正在获取用户浏览历史,userId: {},entityType: {},pageNum: {},pageSize: {}", userId, entityType, pageNum, pageSize);
         Page<UserVisitRecord> page = new Page<>(pageNum, pageSize);
@@ -350,7 +372,7 @@ public class UserServiceImpl implements IUserService {
                     break;
             }
 
-            userVisitRecordVO.setEntityImg(entityImg);
+            userVisitRecordVO.setEntityImg(pexelsClientServiceImpl.searchOnePhoto(entityName));
             userVisitRecordVO.setEntityName(entityName);
 
             return userVisitRecordVO;
@@ -364,6 +386,13 @@ public class UserServiceImpl implements IUserService {
                 .pageSize(pageSize)
                 .total(result.getTotal())
                 .build();
+    }
+
+    private void checkUserExist(String userId) {
+        if(!userMapper.exists(new LambdaQueryWrapper<User>().eq(User::getUserId, userId))){
+            log.info("用户不存在,userId: {}", userId);
+            throw new AppException(String.valueOf(GlobalServiceStatusCode.USER_NOT_EXIST.getCode()), GlobalServiceStatusCode.USER_NOT_EXIST.getMessage());
+        }
     }
 
 }

@@ -1,5 +1,7 @@
 package com.op.citybag.demos.model.common;
 
+import java.util.List;
+
 /**
  * @Author: 严豪哲
  * @Description: redis的key前缀
@@ -50,6 +52,8 @@ public class Common {
 
     public static final String AUTH_TYPE = "auth_type";
 
+    public static final String LIKE_COUNT = "like_count";
+
     public static final Integer WX_USER = 1;
 
     public static final Integer STU_USER = 2;
@@ -93,5 +97,10 @@ public class Common {
 
     public static final Integer QUERY_COVER_TIME = 60 * 1000;
 
+    /**
+     * 城市名称
+     */
+    public static final List<String> CITY_NAME_LIST =
+            List.of("科尔沁", "巴音布鲁克", "桂林", "成都", "泉州");
 
 }

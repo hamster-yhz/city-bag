@@ -15,6 +15,7 @@ public class SplitUtil {
     }
 
     public static List<String> splitByUnderscore(String str) {
-        return List.of(str.split("_"));
+        return List.of(str.split("/"));
     }
+
 }

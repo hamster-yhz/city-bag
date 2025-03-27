@@ -36,6 +36,9 @@ public class Dormitory {
     @TableField("price")
     private String price;
 
+    @TableField("address")
+    private String address;
+
     @TableField("phone")
     private String phone;
 

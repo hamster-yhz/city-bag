@@ -384,4 +384,8 @@ public interface IRedisService {
     int getZSetSize(String key);
 
     int getActiveZSetSize(String key);
+
+    void removeMap(String key);
+
+    void removeZSet(String key);
 }
