@@ -98,10 +98,6 @@ services:
       - RABBITMQ_DEFAULT_VHOST=/
     networks:
       - my-network
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-
 
 networks:
   my-network:
