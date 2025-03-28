@@ -84,13 +84,13 @@ coverage/
 .editorconfig
 
 # 忽略 Docker 相关文件
-Dockerfile
-docker-compose.yml
-.dockerignore
+#Dockerfile
+#docker-compose.yml
+#.dockerignore
 
-# 忽略 Kubernetes 相关文件
-*.yaml
-*.yml
+# 项目配置文件
+application.yml
+application-dev.yml
 
 # 忽略 CI/CD 配置文件
 .gitlab-ci.yml
