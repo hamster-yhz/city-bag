@@ -1,5 +1,5 @@
 # 命令执行 docker-compose -f docker-compose-environment.yml up -d
-version: '3.9'
+
 services:
   mysql:
     image: mysql:8.0.32
@@ -78,9 +78,11 @@ services:
       - LC_ALL=C.UTF-8
     networks:
       - my-network
-    depends_on:
-      redis:
-        condition: service_healthy
+    healthcheck:  # 新增健康检查
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   #rabbitmq:
   rabbitmq:
@@ -108,4 +110,3 @@ networks:
 volumes:
   mysql_data:
     driver: local
-  # 定义MySQL数据卷
