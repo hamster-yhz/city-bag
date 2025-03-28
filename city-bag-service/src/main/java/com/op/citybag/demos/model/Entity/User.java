@@ -52,6 +52,9 @@ public class User {
     @TableField("user_name")
     private String userName;
 
+    @TableField("english_name")
+    private String englishName;
+
     @TableField("image_url")
     private String imageUrl;
 

@@ -27,6 +27,9 @@ public class Food {
     @TableField("food_name")
     private String foodName;
 
+    @TableField("english_name")
+    private String englishName;
+
     @TableField("introduce")
     private String introduce;
 

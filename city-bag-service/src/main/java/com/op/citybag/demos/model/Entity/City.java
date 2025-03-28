@@ -27,6 +27,9 @@ public class City {
     @TableField("city_name")
     private String cityName;
 
+    @TableField("english_name")
+    private String englishName;
+
     @TableField("city_introduce")
     private String cityIntroduce;
 

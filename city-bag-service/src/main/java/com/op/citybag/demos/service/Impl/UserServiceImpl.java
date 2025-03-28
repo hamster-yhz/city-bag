@@ -194,7 +194,8 @@ public class UserServiceImpl implements IUserService {
             redissonService.unLock(lock);
         }
 
-        redissonService.remove(RedisKey.CITY_BAG_CACHE + entityType + RedisKey.INFO + userId);
+        //从缓存中获取会设置收藏状态 这里不用删缓存
+//        redissonService.remove(RedisKey.CITY_BAG_CACHE + entityType + RedisKey.INFO + userId);
         log.info("收藏成功,userId: {},entityType: {},entityId: {}", userId, entityType, entityId);
     }
 
@@ -226,7 +227,8 @@ public class UserServiceImpl implements IUserService {
             throw new AppException(GlobalServiceStatusCode.SYSTEM_SERVICE_ERROR.getMessage(), String.valueOf(GlobalServiceStatusCode.SYSTEM_SERVICE_ERROR.getCode()));
         }
 
-        redissonService.remove(RedisKey.CITY_BAG_CACHE + entityType + RedisKey.INFO + userId);
+        //从缓存中获取会设置收藏状态 这里不用删缓存
+//        redissonService.remove(RedisKey.CITY_BAG_CACHE + entityType + RedisKey.INFO + userId);
 
         log.info("取消收藏成功,userId: {},entityType: {},entityId: {}", userId, entityType, entityId);
     }
@@ -378,7 +380,7 @@ public class UserServiceImpl implements IUserService {
             return userVisitRecordVO;
         }).collect(Collectors.toList());
 
-        log.info("获取用户收藏列表成功,userId: {},entityType: {},pageNum: {},pageSize: {}", userId, entityType, pageNum, pageSize);
+        log.info("获取用户浏览列表成功,userId: {},entityType: {},pageNum: {},pageSize: {}", userId, entityType, pageNum, pageSize);
 
         return UserVisitRecordListVO.builder()
                 .visitRecordList(visitRecordList)

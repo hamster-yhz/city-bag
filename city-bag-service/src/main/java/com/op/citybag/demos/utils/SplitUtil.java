@@ -18,4 +18,12 @@ public class SplitUtil {
         return List.of(str.split("/"));
     }
 
+    public static String unsplitBySlash(List<String> list) {
+        return String.join("/", list);
+    }
+
+    public static String unsplitByUnderscore(List<String> list) {
+        return String.join("_", list);
+    }
+
 }

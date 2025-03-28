@@ -27,6 +27,9 @@ public class ScenicSpot {
     @TableField("scenic_spot_name")
     private String scenicSpotName;
 
+    @TableField("english_name")
+    private String englishName;
+
     @TableField("introduce")
     private String introduce;
 

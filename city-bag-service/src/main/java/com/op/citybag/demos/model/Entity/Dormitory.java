@@ -27,6 +27,9 @@ public class Dormitory {
     @TableField("dormitory_name")
     private String dormitoryName;
 
+    @TableField("english_name")
+    private String englishName;
+
     @TableField("introduce")
     private String introduce;
 

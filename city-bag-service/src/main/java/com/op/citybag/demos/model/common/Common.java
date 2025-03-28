@@ -34,6 +34,8 @@ public class Common {
 
     public static final String FOOD = "food";
 
+    public static final String PHOTO_URL = "photo_url";
+
     public static final String CITY_ID = "city_id";
 
     public static final String CITY_NAME = "city_name";
@@ -43,6 +45,14 @@ public class Common {
     public static final String SCENIC_SPOT_ID = "scenic_spot_id";
 
     public static final String FOOD_ID = "food_id";
+
+    public static final String FOOD_LIST = "food_list";
+
+    public static final String DORMITORY_LIST = "dormitory_list";
+
+    public static final String SCENIC_SPOT_LIST = "scenic_spot_list";
+
+    public static final String IMG_URL = "image_url";
 
     public static final String PHONE_NUMBER = "phone_number";
 
