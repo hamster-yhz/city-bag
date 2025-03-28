@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS `food`
     `food_id`     VARCHAR(36)      NOT NULL DEFAULT '' COMMENT '美食id',
     -- 名称
     `food_name`   VARCHAR(16)      NOT NULL DEFAULT '' COMMENT '美食名',
+    -- 英文名称
+    `english_name` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '英文名',
     -- 美食介绍
     `introduce`   TEXT COMMENT '美食介绍',
     -- 美食封面图URL

@@ -1,6 +1,6 @@
 -- 用户表示例数据
 INSERT INTO `user` (id, user_id, user_name, image_url, auth_key, auth_secret, auth_type, gender, birthday,
-                    personalized_signature, jurisdiction, like_count, create_time, update_time, is_deleted)
+                    personalized_signature, jurisdiction, like_count, create_time, update_time, is_deleted, english_name)
 VALUES (NULL, -- 自动生成的主键
         UUID(), -- 随机生成的user_id
         '张三', -- 用户名
@@ -15,7 +15,8 @@ VALUES (NULL, -- 自动生成的主键
         0, -- 点赞数量
         CURRENT_TIMESTAMP, -- 创建时间
         CURRENT_TIMESTAMP, -- 更新时间
-        0 -- 未删除
+        0, -- 未删除
+        'ZhangSan' -- 英文名
        ),
        (NULL,
         UUID(),
@@ -31,7 +32,9 @@ VALUES (NULL, -- 自动生成的主键
         5,
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP,
-        0),
+        0,
+        'LiSi' -- 英文名
+       ),
        (NULL,
         UUID(),
         '王五',
@@ -46,7 +49,9 @@ VALUES (NULL, -- 自动生成的主键
         10,
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP,
-        0),
+        0,
+        'WangWu' -- 英文名
+       ),
        (NULL,
         UUID(),
         '赵六',
@@ -61,7 +66,9 @@ VALUES (NULL, -- 自动生成的主键
         0,
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP,
-        0),
+        0,
+        'ZhaoLiu' -- 英文名
+       ),
        (NULL,
         UUID(),
         '陈七',
@@ -76,4 +83,6 @@ VALUES (NULL, -- 自动生成的主键
         15,
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP,
-        0);
+        0,
+        'ChenQi' -- 英文名
+       );

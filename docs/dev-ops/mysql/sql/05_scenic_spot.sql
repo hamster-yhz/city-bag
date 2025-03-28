@@ -6,7 +6,9 @@ CREATE TABLE IF NOT EXISTS `scenic_spot`
     -- 景点id
     `scenic_spot_id`   VARCHAR(36)      NOT NULL DEFAULT '' COMMENT '景点id',
     -- 名称
-    `scenic_spot_name` VARCHAR(16)      NOT NULL DEFAULT '' COMMENT '景点名',
+    `scenic_spot_name` VARCHAR(32)      NOT NULL DEFAULT '' COMMENT '景点名',
+    -- 英文名称
+    `english_name` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '英文名',
     -- 景点介绍
     `introduce`        TEXT COMMENT '景点介绍',
     -- 景点封面图URL

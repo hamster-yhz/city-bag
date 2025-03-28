@@ -1,10 +1,11 @@
 -- 住宿表示例数据
-INSERT INTO `dormitory` (id, dormitory_id, dormitory_name, introduce, image_url, price, address, phone, photo_url, tag_list,
+INSERT INTO `dormitory` (id, dormitory_id, dormitory_name, english_name, introduce, image_url, price, address, phone, photo_url, tag_list,
                          type, like_count, city_id,
                          create_time, update_time, is_deleted)
 VALUES (NULL, -- 自动生成的主键
         UUID(), -- 住宿id
         '北京王府井大酒店', -- 住宿名称
+        'Beijing Wangfujing Hotel', -- 英文名称
         '位于北京市中心，交通便利，设施完善，服务周到，是商务和休闲的理想选择。', -- 介绍
         '', -- 图片地址
         '1000元',
@@ -22,6 +23,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '上海外滩皇冠洲际酒店',
+        'Shanghai Bund Crown Plaza Hotel', -- 英文名称
         '坐落于上海外滩，拥有迷人的浦江景观，客房设施豪华，服务高端，是高端商务和休闲的最佳选择。',
         '', -- 图片地址
         '2000元',
@@ -38,6 +40,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '广州塔 Teeth_Residential_Tower',
+        'Guangzhou TV Tower Teeth Residential Tower', -- 英文名称
         '广州塔附近的时尚居住空间，交通便利，景观壮丽，适合短期入住。',
         '', -- 图片地址
         '600元',
@@ -54,6 +57,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '成都宽窄巷子特色民宿',
+        'Chengdu Kuanzhaxiangzi Characteristic Homestay', -- 英文名称
         '位于成都历史文化街区，保留了古典四川建筑风格，提供独特的入住体验。',
         '', -- 图片地址
         '200元',
@@ -70,6 +74,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '南京夫子庙国际青年旅舍',
+        'Nanjing Fuzimiao International Youth Hostel', -- 英文名称
         '靠近夫子庙景区，适合背包客和游客，提供经济实惠的住宿选择。',
         '', -- 图片地址
         '260元',
@@ -86,6 +91,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL, -- 自动生成的主键
         UUID(), -- 住宿id
         '重庆解放碑青年旅社',
+        'Chongqing Jiefangbei Youth Hostel', -- 英文名称
         '位于解放碑商圈，交通便利，适合背包客和游客，提供经济实惠的住宿选择。',
         '', -- 图片地址
         '150元',
@@ -103,6 +109,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '重庆洪崖洞特色民宿',
+        'Chongqing Hongyadong Characteristic Homestay', -- 英文名称
         '位于洪崖洞景区附近，保留了重庆老城的建筑风格，提供独特的入住体验。',
         '', -- 图片地址
         '300元',
@@ -119,6 +126,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL, -- 自动生成的主键
         UUID(), -- 住宿id
         '西安古城酒店',
+        'Xi\'an Ancient City Hotel', -- 英文名称
         '位于西安古城墙附近，交通便利，设施完善，服务周到，是商务和休闲的理想选择。',
         '', -- 图片地址
         '800元',
@@ -136,6 +144,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '杭州西湖畔民宿',
+        'Hangzhou West Lake Side Homestay', -- 英文名称
         '位于西湖畔，交通便利，环境优美，适合短期入住。',
         '', -- 图片地址
         '500元',
@@ -152,6 +161,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '苏州平江路客栈',
+        'Suzhou Pingjiang Road Inn', -- 英文名称
         '位于苏州平江路，交通便利，环境优雅，适合短期入住。',
         '', -- 图片地址
         '400元',
@@ -168,6 +178,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '丽江古城客栈',
+        'Lijiang Ancient City Inn', -- 英文名称
         '位于丽江古城，交通便利，环境优美，适合短期入住。',
         '', -- 图片地址
         '300元',
@@ -184,6 +195,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL, -- 自动生成的主键
         UUID(), -- 住宿id
         '科尔沁草原度假村',
+        'Korqin Grassland Resort', -- 英文名称
         '位于科尔沁大草原附近，交通便利，环境优美，适合家庭和朋友短期入住。', -- 介绍
         '', -- 图片地址
         '500元',
@@ -201,6 +213,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL, -- 自动生成的主键
         UUID(), -- 住宿id
         '巴音布鲁克草原度假村',
+        'Bayinbuluk Grassland Resort', -- 英文名称
         '位于巴音布鲁克草原附近，交通便利，环境优美，适合家庭和朋友短期入住。',
         '', -- 图片地址
         '500元',
@@ -218,6 +231,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '泉州西湖宾馆',
+        'Quanzhou West Lake Hotel', -- 英文名称
         '毗邻西湖公园，融合闽南建筑风格，设有观景餐厅和茶室。',
         '',
         '600元',
@@ -234,6 +248,7 @@ VALUES (NULL, -- 自动生成的主键
        (NULL,
         UUID(),
         '桂林香格里拉大酒店',
+        'Guilin Shangri-La Hotel', -- 英文名称
         '坐拥漓江美景，配备室外泳池和SPA中心',
         '',
         '800元',

@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS `user`
     `user_id`                VARCHAR(36)      NOT NULL DEFAULT '' COMMENT '用户id',
     -- 昵称
     `user_name`              VARCHAR(16)      NOT NULL DEFAULT '' COMMENT '用户姓名',
+    -- 英文名称
+    `english_name` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '英文名',
     -- 用户头像URL
     `image_url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户头像URL',
     -- 手机号

@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `city` (
     -- 名称
     `city_name` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '城市名',
     -- 英文名称
-    `english_name` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '城市英文名',
+    `english_name` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '城市英文名',
     -- 城市介绍
     `city_introduce` TEXT COMMENT '城市介绍',
     -- 美食介绍
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `city` (
     -- 景点介绍
     `scenic_spot_introduce` TEXT COMMENT '景点介绍',
     -- 城市封面图URL
-    `image_url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '城市封面图URL',
+    `image_url` VARCHAR(255) DEFAULT '' COMMENT '城市封面图URL',
 
     -- 乐观锁版本号 --
     `version` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '乐观锁版本号',

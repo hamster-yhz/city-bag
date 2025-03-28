@@ -45,12 +45,12 @@ services(){
 
 # 关闭服务模块
 stop(){
-  docker stop polaris
+  docker stop city-bag
 }
 
 # 删除服务模块
 rm(){
-  docker rm polaris
+  docker rm city-bag
 }
 
 # 删除所有未使用的镜像

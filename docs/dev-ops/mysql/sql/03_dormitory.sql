@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS `dormitory`
     `dormitory_id`   VARCHAR(36)      NOT NULL DEFAULT '' COMMENT '住宿id',
     -- 昵称
     `dormitory_name` VARCHAR(32)      NOT NULL DEFAULT '' COMMENT '住宿名',
+    -- 英文名称
+    `english_name` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '英文名',
     -- 住宿
     `introduce`      TEXT COMMENT '介绍',
     -- 景点封面图URL
