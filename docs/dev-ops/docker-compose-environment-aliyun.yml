@@ -2,7 +2,7 @@
 version: '3.9'
 services:
   mysql:
-    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/mysql:8.0.32
+    image: registry.cn-hangzhou.aliyuncs.com/acs/mysql:8.0.32
     container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
@@ -25,7 +25,7 @@ services:
 
   # phpmyadmin https://hub.docker.com/_/phpmyadmin
   phpmyadmin:
-    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/phpmyadmin:5.2.1
+    image: registry.cn-hangzhou.aliyuncs.com/dockerhub/phpmyadmin:5.2.1
     container_name: phpmyadmin
     hostname: phpmyadmin
     ports:
@@ -33,7 +33,7 @@ services:
     environment:
       - PMA_HOST=mysql
       - PMA_PORT=3306
-      - MYSQL_ROOT_PASSWORD=123456  # 修改密码与普通版本一致
+      - MYSQL_ROOT_PASSWORD=123456
     depends_on:
       mysql:
         condition: service_healthy
@@ -42,7 +42,7 @@ services:
 
   # Redis
   redis:
-    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/redis:6.2
+    image: registry.cn-hangzhou.aliyuncs.com/acs/redis:6.2.6-alpine
     container_name: redis
     restart: always
     hostname: redis
@@ -63,7 +63,7 @@ services:
   # RedisAdmin https://github.com/joeferner/redis-commander
   # 账密 admin/admin
   redis-admin:
-    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/redis-commander:0.8.0
+    image: registry.cn-hangzhou.aliyuncs.com/dockerhub/rediscommander/redis-commander:0.8.0
     container_name: redis-admin
     hostname: redis-commander
     restart: always

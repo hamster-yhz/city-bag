@@ -20,6 +20,7 @@ if ! command -v docker >/dev/null 2>&1; then
 fi
 
 # Check if Docker Compose is installed and set the appropriate command
+# shellcheck disable=SC2039
 if command -v docker-compose &> /dev/null
 then
     COMPOSE_COMMAND="docker-compose"
@@ -35,7 +36,7 @@ fi
 
 # 启动基础环境（必须）
 base(){
-  $COMPOSE_COMMAND -f docker-compose-environment.yml up -d
+  $COMPOSE_COMMAND -f docker-compose-environment-aliyun.yml up -d
 }
 
 # 启动程序模块（必须）
