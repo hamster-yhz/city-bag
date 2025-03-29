@@ -36,7 +36,7 @@ fi
 
 # 启动基础环境（必须）
 base(){
-  $COMPOSE_COMMAND -f docker-compose-environment-aliyun.yml up -d
+  $COMPOSE_COMMAND -f docker-compose-environment.yml up -d
 }
 
 # 启动程序模块（必须）
